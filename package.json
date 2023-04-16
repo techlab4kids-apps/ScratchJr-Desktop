@@ -1,7 +1,7 @@
 {
     "name": "ScratchJr",
-    "productName": "ScratchJr",
-    "version": "1.3.2",
+    "productName": "ScratchJr (TechLAB4Kids release)",
+    "version": "1.3.2-TL4K002",
     "description": "ScratchJr Desktop Edition",
     "main": "src/main.js",
     "scripts": {

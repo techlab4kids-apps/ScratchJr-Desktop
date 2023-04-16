@@ -1,0 +1,283 @@
+[
+  {
+    "gallery": "Samples",
+    "version": "iOSv01",
+    "thumbnail": {
+      "pagecount": 1,
+      "md5": "samples/CodingCosima.png"
+    },
+    "ctime": "2016-01-15 18:14:49",
+    "deleted": "NO",
+    "mtime": "1452884953933",
+    "name": "CodingCosima",
+    "id": "102",
+    "json": {
+      "pages": [
+        "page 1"
+      ],
+      "currentPage": "page 1",
+      "page 1": {
+        "textstartat": 36,
+        "sprites": [
+          "Narciso 1",
+          "Sole 1",
+          "Cosima ragazza (Cosima) 1"
+        ],
+        "md5": "Cosima_Cucina.svg",
+        "num": 1,
+        "lastSprite": "Cosima ragazza (Cosima) 1",
+        "Narciso 1": {
+          "shown": false,
+          "type": "sprite",
+          "md5": "Daffodil.svg",
+          "id": "Narciso 1",
+          "flip": false,
+          "name": "Narciso",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 418,
+          "ycoor": 167,
+          "cx": 80,
+          "cy": 85,
+          "w": 160,
+          "h": 171,
+          "homex": 418,
+          "homey": 167,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                302,
+                64
+              ],
+              [
+                "show",
+                "null",
+                375,
+                64
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                560,
+                61
+              ],
+              [
+                "hide",
+                "null",
+                633,
+                61
+              ],
+              [
+                "say",
+                "BRAVA COSIMA!",
+                698,
+                61
+              ]
+            ]
+          ]
+        },
+        "Sole 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "d14843cd556ce9b9b1032a0c0bca383a.svg",
+          "id": "Sole 1",
+          "flip": false,
+          "name": "Sole",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 299,
+          "ycoor": 194,
+          "cx": 86,
+          "cy": 86,
+          "w": 173,
+          "h": 173,
+          "homex": 299,
+          "homey": 194,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                351,
+                33
+              ],
+              [
+                "show",
+                "null",
+                424,
+                33
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                618,
+                39
+              ],
+              [
+                "say",
+                "ATTENTA COSIMA!",
+                691,
+                39
+              ],
+              [
+                "endstack",
+                "null",
+                756,
+                39
+              ]
+            ]
+          ]
+        },
+        "Cosima ragazza (Cosima) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "Cosima_Ragazza.svg",
+          "id": "Cosima ragazza (Cosima) 1",
+          "flip": false,
+          "name": "Cosima ragazza (Cosima)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 394,
+          "ycoor": 157,
+          "cx": 90,
+          "cy": 126,
+          "w": 180,
+          "h": 253,
+          "homex": 34,
+          "homey": 301,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "home",
+                "null",
+                528,
+                18
+              ],
+              [
+                "forward",
+                3,
+                593,
+                18
+              ],
+              [
+                "forward",
+                3,
+                658,
+                18
+              ],
+              [
+                "up",
+                3,
+                723,
+                18
+              ],
+              [
+                "forward",
+                3,
+                788,
+                18
+              ],
+              [
+                "forward",
+                3,
+                853,
+                18
+              ]
+            ],
+            [
+              [
+                "onflag",
+                "null",
+                422,
+                126
+              ],
+              [
+                "home",
+                "null",
+                495,
+                126
+              ],
+              [
+                "forward",
+                3,
+                560,
+                126
+              ],
+              [
+                "forward",
+                3,
+                625,
+                126
+              ],
+              [
+                "forward",
+                3,
+                690,
+                126
+              ],
+              [
+                "forward",
+                3,
+                755,
+                126
+              ],
+              [
+                "forward",
+                3,
+                820,
+                126
+              ],
+              [
+                "up",
+                3,
+                885,
+                126
+              ],
+              [
+                "up",
+                3,
+                950,
+                126
+              ]
+            ]
+          ]
+        },
+        "layers": [
+          "Narciso 1",
+          "Sole 1",
+          "Cosima ragazza (Cosima) 1"
+        ]
+      }
+    }
+  }
+]

@@ -1,17 +1,25 @@
 {
     "path":"./svglibrary/",
     "samples": [
-    	"samples/Underthesea.txt",
+        "samples/CodingAnimali.txt",
+        "samples/CodingCosima.txt",
     	"samples/Farm.txt",
     	"samples/Seasons.txt",
     	"samples/Friends.txt",
     	"samples/Dance.txt",
     	"samples/AnimalRace.txt",
-    	"samples/Bump.txt",
-    	"samples/QuickIntro.txt"
+    	"samples/Bump.txt"
 	],
     "backgrounds": [
-    	{"md5":"Farm.svg","width":480,"height":360,"ext":"svg","name":"Farm"},
+    	{"md5":"TabelloneAnimali.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAnimali"},
+    	{"md5":"TabelloneAnimaliVuoto.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAnimaliVuoto"},
+    	{"md5":"Cosima_Cucina.svg","width":480,"height":360,"ext":"svg","name":"Cosima_Cucina"},
+    	{"md5":"Cosima_Natura.svg","width":480,"height":360,"ext":"svg","name":"Cosima_Natura"},
+    	{"md5":"Ruby_casa_leopardina_small.svg","width":480,"height":360,"ext":"svg","name":"Ruby_casa_leopardina_small"},
+    	{"md5":"Ruby_cucina_small.svg","width":480,"height":360,"ext":"svg","name":"Ruby_cucina"},
+    	{"md5":"Ruby_orto_small.svg","width":480,"height":360,"ext":"svg","name":"Ruby_orto_small"},
+
+        {"md5":"Farm.svg","width":480,"height":360,"ext":"svg","name":"Farm"},
     	{"md5":"Park.svg","width":480,"height":360,"ext":"svg","name":"Park"},
     	{"md5":"Suburbs.svg","width":480,"height":360,"ext":"svg","name":"Suburbs"},
     	{"md5":"City.svg","width":480,"height":360,"ext":"svg","name":"City"},
@@ -30,7 +38,7 @@
     	{"md5":"Spring.svg","width":480,"height":360,"ext":"svg","name":"Spring"},
     	{"md5":"Creek.svg","width":480,"height":360,"ext":"svg","name":"River"},
     	{"md5":"Lake.svg","width":480,"height":360,"ext":"svg","name":"Lake"},
-      {"md5":"Woods.svg","width":480,"height":360,"ext":"svg","name":"Woods"},
+        {"md5":"Woods.svg","width":480,"height":360,"ext":"svg","name":"Woods"},
 
     	{"md5":"BeachDay.svg","width":480,"height":360,"ext":"svg","name":"Beach Day"},
     	{"md5":"BeachSunrise.svg","width":480,"height":360,"ext":"svg","name":"Beach Sunset"},
@@ -45,6 +53,42 @@
     	{"md5":"MoonBkg.svg","width":480,"height":360,"ext":"svg","name":"Moon"}
     ],
     "sprites": [
+        {"md5":"Techy.svg","width":400,"height":400,"ext":"svg","name":"Techy","order":"characters,00 TL4K","tags":["characters","00 TL4K"]},
+
+      {"md5":"coding_Techy.svg","width":400,"height":400,"ext":"svg","name":"coding_Techy","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+      {"md5":"coding_Granchino.svg","width":120,"height":120,"ext":"svg","name":"coding_Granchino","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+      {"md5":"coding_elephant.svg","width":120,"height":120,"ext":"svg","name":"coding_elephant","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+      {"md5":"coding_flamingo.svg","width":120,"height":120,"ext":"svg","name":"coding_flamingo","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+        {"md5":"coding_giraffe.svg","width":120,"height":120,"ext":"svg","name":"coding_giraffe","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+        {"md5":"coding_house.svg","width":120,"height":120,"ext":"svg","name":"coding_house","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+        {"md5":"coding_kangaroo.svg","width":120,"height":120,"ext":"svg","name":"coding_kangaroo","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+        {"md5":"coding_koala.svg","width":120,"height":120,"ext":"svg","name":"coding_koala","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+        {"md5":"coding_lion.svg","width":120,"height":120,"ext":"svg","name":"coding_lion ","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
+
+      {"md5":"Ruby_01.svg","width":120,"height":120,"ext":"svg","name":"Ruby_01 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_02.svg","width":120,"height":120,"ext":"svg","name":"Ruby_02 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_03.svg","width":120,"height":120,"ext":"svg","name":"Ruby_03 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Django.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Django ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Leopardina.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Leopardina ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Pinguino_01.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Pinguino_01 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Pinguino_02.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Pinguino_02 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Pinguino_03.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Pinguino_03 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Pinguino_04.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Pinguino_04 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Robot.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Robot ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+      {"md5":"Ruby_Volpe.svg","width":120,"height":120,"ext":"svg","name":"Ruby_Volpe ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
+
+
+      {"md5":"Cosima_Andrea.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Andrea","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Ragazza.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Ragazza ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Ragazza_Riposa.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Ragazza_Riposa ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Grande.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Grande ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Nonna.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Nonna ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Jana.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Jana ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Jana.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Jana ","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Santus.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Santus","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Beppa.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Beppa","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+      {"md5":"Cosima_Muflone.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Muflone","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
+
     	{"md5":"Blue.svg","width":151,"height":253,"ext":"svg","name":"Tic","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Purple.svg","width":161,"height":185,"ext":"svg","name":"Tac","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Red.svg","width":213,"height":198,"ext":"svg","name":"Toc","order":"characters,02 funky","tags":["characters","02 funky"]},

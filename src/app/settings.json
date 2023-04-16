@@ -1,9 +1,9 @@
 {
     "edition": "free",
-    "scratchJrVersion": "iOSv01",
+    "scratchJrVersion": "TL4K01",
     "useStoryStarters": false,
     "shareEnabled": false,
-    "defaultSprite": "Blue.svg",
+    "defaultSprite": "Techy.svg",
     "spriteOutlineColor": "white",
     "stageColor": "#F5F2F7",
     "textSpriteFont": "Helvetica",
@@ -17,8 +17,8 @@
     "categoryStopColor": "#D62222",
     "paletteBlockShadowOpacity": 0.8,
     "autoSaveInterval": 30000,
-    "defaultLocale": "en",
-    "defaultLocaleShort": "en",
+    "defaultLocale": "it",
+    "defaultLocaleShort": "it",
     "supportedLocales": {
         "Català": "ca",
         "Deutsch": "de",

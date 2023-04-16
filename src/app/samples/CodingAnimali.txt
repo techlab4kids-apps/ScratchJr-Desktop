@@ -1,0 +1,527 @@
+[
+  {
+    "gallery": "Samples",
+    "version": "iOSv01",
+    "thumbnail": {
+      "pagecount": 1,
+      "md5": "samples/CodingInfanzia.png"
+    },
+    "ctime": "2016-01-15 18:14:49",
+    "deleted": "NO",
+    "mtime": "1452884953933",
+    "name": "CodingInfanzia",
+    "id": "102",
+    "json": {
+      "pages": [
+        "page 1"
+      ],
+      "currentPage": "page 1",
+      "page 1": {
+        "textstartat": 36,
+        "sprites": [
+          "Granchino (Coding) 1",
+          "Techy (Coding) 1",
+          "Elefante (Coding) 1",
+          "Fenicottero (Coding) 1",
+          "Giraffa (Coding) 1",
+          "Canguro (Coding) 1",
+          "Koala (Coding) 1"
+        ],
+        "md5": "TabelloneAnimaliVuoto.svg",
+        "num": 1,
+        "lastSprite": "Granchino (Coding) 1",
+        "Granchino (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_Granchino.svg",
+          "id": "Granchino (Coding) 1",
+          "flip": false,
+          "name": "Granchino (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 36,
+          "ycoor": 34,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 36,
+          "homey": 34,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "forward",
+                3,
+                400,
+                150
+              ]
+            ],
+            [
+              [
+                "back",
+                3,
+                553,
+                149
+              ]
+            ],
+            [
+              [
+                "up",
+                3,
+                711,
+                146
+              ]
+            ],
+            [
+              [
+                "down",
+                3,
+                884,
+                144
+              ]
+            ],
+            [
+              [
+                "onflag",
+                "null",
+                18,
+                29
+              ],
+              [
+                "home",
+                "null",
+                91,
+                29
+              ]
+            ]
+          ]
+        },
+        "Techy (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_Techy.svg",
+          "id": "Techy (Coding) 1",
+          "flip": false,
+          "name": "Techy (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 106,
+          "ycoor": 255,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 106,
+          "homey": 255,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "Elefante (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_elephant.svg",
+          "id": "Elefante (Coding) 1",
+          "flip": false,
+          "name": "Elefante (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 251,
+          "ycoor": 31,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 251,
+          "homey": 31,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "Fenicottero (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_flamingo.svg",
+          "id": "Fenicottero (Coding) 1",
+          "flip": false,
+          "name": "Fenicottero (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 320,
+          "ycoor": 184,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 320,
+          "homey": 184,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "Giraffa (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_giraffe.svg",
+          "id": "Giraffa (Coding) 1",
+          "flip": false,
+          "name": "Giraffa (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 180,
+          "ycoor": 255,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 180,
+          "homey": 255,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "Canguro (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_kangaroo.svg",
+          "id": "Canguro (Coding) 1",
+          "flip": false,
+          "name": "Canguro (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 252,
+          "ycoor": 324,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 252,
+          "homey": 324,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "Koala (Coding) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "coding_koala.svg",
+          "id": "Koala (Coding) 1",
+          "flip": false,
+          "name": "Koala (Coding)",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 107,
+          "ycoor": 326,
+          "cx": 60,
+          "cy": 60,
+          "w": 120,
+          "h": 120,
+          "homex": 107,
+          "homey": 326,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                317,
+                45
+              ],
+              [
+                "show",
+                "null",
+                390,
+                45
+              ],
+              [
+                "home",
+                "null",
+                455,
+                45
+              ]
+            ],
+            [
+              [
+                "ontouch",
+                "null",
+                320,
+                149
+              ],
+              [
+                "playsnd",
+                "pop.mp3",
+                393,
+                149
+              ],
+              [
+                "hide",
+                "null",
+                458,
+                149
+              ]
+            ]
+          ]
+        },
+        "layers": [
+          "Techy (Coding) 1",
+          "Fenicottero (Coding) 1",
+          "Giraffa (Coding) 1",
+          "Canguro (Coding) 1",
+          "Koala (Coding) 1",
+          "Elefante (Coding) 1",
+          "Granchino (Coding) 1"
+        ]
+      }
+    }
+  }
+]

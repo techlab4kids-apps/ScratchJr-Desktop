@@ -35,7 +35,7 @@ isDev = (isDev) || process.env.DEBUG_SCRATCHJR;
 /* eslint-disable import/no-extraneous-dependencies */  // --> OFF
 /* eslint-disable import/no-unresolved  */  // --> OFF
 
-const { app, dialog, BrowserWindow, BrowserView, ipcMain, Menu } = require('electron');  
+const { app, dialog, BrowserWindow, BrowserView, ipcMain, Menu } = require('electron');
 
 
 
@@ -95,8 +95,9 @@ function createWindow() {
 
   win = new BrowserWindow(
     {
-      width: 1020,
-      height: 800,
+      fullscreen: false,
+      width: 1280,
+      height: 720,
       minHeight: 800,
       minWidth: 1000,
       customVar: 'elephants',
@@ -150,9 +151,9 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-	
+
   createWindow();
-  
+
   let template;
   if (dataStore.hasRestoreDatabase()) {
 	   template = [
@@ -165,21 +166,21 @@ app.on('ready', () => {
 		  ],
 		}];
   } else {
-      template = [ 
+      template = [
       {
 		  label: 'File',
 		  submenu: [
 				{ role: 'quit' },
 		  ],
 		}];
-  }  
-  
+  }
+
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
-  
-  
-  
+
+
+
 
 });
 
@@ -219,8 +220,8 @@ app.on('activate', () => {
 
 /** returns if we are in a debug mode */
 ipcMain.on('io_getIsDebug', (event, arg) =>  { // eslint-disable-line  no-unused-vars
-	event.returnValue = DEBUG; 
-	
+	event.returnValue = DEBUG;
+
 });
 
 ipcMain.on('debugWriteLog', (event, args) =>  { // eslint-disable-line  no-unused-vars
@@ -288,7 +289,7 @@ ipcMain.on('io_getmediadata', (event, key, offset, length) => {
 
   if (mediaString) {
     try {
-      event.returnValue = mediaString.substring(offset, offset + length); 
+      event.returnValue = mediaString.substring(offset, offset + length);
     } catch (e) {
       debugLog('error parsing media');
     }
@@ -408,15 +409,15 @@ ipcMain.on('io_gettextresource', (event, filename) => {
 });
 
 
-/** search for audio data 
+/** search for audio data
 	first look for app/src/samples
 	then look for  app/src/sounds
 	then look in db for the audio name
 */
 ipcMain.on('io_getAudioData', (event, audioName) => {
    if (DEBUG_FILEIO) debugLog('io_getAudioData - looking for', audioName);
-  
-   
+
+
     // try fishing out of the app directory first - samples/pig.wav
   let filePath = dataStore.safeGetFilenameInAppDirectory(audioName, false);
 
@@ -425,23 +426,23 @@ ipcMain.on('io_getAudioData', (event, audioName) => {
   }
 
 
-  
+
   if (!filePath) { // if not pull from the scratch document folder.
   	if (DEBUG_FILEIO) debugLog('...trying to look in the PROJECTFILE table', audioName);
-   
+
    	// this is already stored as a string, we do not need to convert it
      let projectDBFile = dataStore.readProjectFileAsBase64EncodedString(audioName);
      if (DEBUG_FILEIO && !projectDBFile) debugLog('...WARNING: unable to find: ',  audioName);
      event.returnValue = projectDBFile;
 	return;
   }
-  
-  
+
+
   const  data = fs.readFileSync(filePath);
-  
+
   if (!data) {
   	if (DEBUG_FILEIO) debugLog('io_getAudioData - could not find on disk', audioName, filePath);
-  
+
     event.returnValue = null;
     return;
   }
@@ -481,7 +482,7 @@ class ScratchJRDataStore {
   constructor(electronBrowserWindow) {
         /** Cache of key to base64-encoded media value */
     this.mediaStrings = {};
-    this.electronBrowserWindow = electronBrowserWindow; 
+    this.electronBrowserWindow = electronBrowserWindow;
   }
     /** gets an md5 checksum of the data passed in.
         @param {object} data
@@ -517,7 +518,7 @@ class ScratchJRDataStore {
   	 const scratchFolder = ScratchJRDataStore.getScratchJRFolder();
 	 const scratchDBPath = path.join(scratchFolder, 'scratchjr.sqllite');
 	 const scratchRestoreDB = path.join(scratchFolder, 'scratchjr.sqllite.restore');
-	
+
   	if (fs.existsSync(scratchRestoreDB)) {
 		this.databaseManager = new DatabaseManager(scratchDBPath, scratchRestoreDB);
 
@@ -527,7 +528,7 @@ class ScratchJRDataStore {
 			 // electron client will navigate back to the index.html
 			 // when it gets ipcRenderer.on('databaseRestored')
 		this.electronBrowserWindow.webContents.send('databaseRestored', {});
-	   
+
 	    dialog.showMessageBox(
 	    		this.electronBrowserWindow,
 	    		{
@@ -758,8 +759,8 @@ class DatabaseManager {
             const queryFindFileInProjects = {
                 stmt: `select ID from PROJECTS where json like "%${currentFileToCheck}%"`,
             };
-        
-            // search in the JSON field of the PROJECTS table 
+
+            // search in the JSON field of the PROJECTS table
             const projectJSON = this.query(queryFindFileInProjects);
             if (projectJSON.length > 0) {
                 if (DEBUG_CLEANASSETS) debugLog('...project is currently using: ', currentFileToCheck);
@@ -812,9 +813,9 @@ class DatabaseManager {
 
 
     this.query(json);
-    
+
     this.save(); // flush the database to disk.
-    
+
   }
     /** loads a file from the PROJECTFILES table
         @param {string} fileMD5 filename
@@ -846,9 +847,9 @@ class DatabaseManager {
     json.values = [fileMD5, content];
     json.stmt = `insert into projectfiles (${keylist.toString()}) values (${values})`;
     var insertSQLResult = this.stmt(json);
-    
+
     this.save(); // flush the database to disk.
-    
+
     return (insertSQLResult >= 0);
   }
 
@@ -896,8 +897,8 @@ class DatabaseManager {
     @returns lastRowId
     */
   stmt(jsonStrOrJsonObj) {
-  
-  
+
+
     try {
         // {"stmt":"select name,thumbnail,id,isgift from projects where deleted = ? AND version = ? AND gallery IS NULL order by ctime desc","values":["NO","iOSv01"]}
 
@@ -907,7 +908,7 @@ class DatabaseManager {
       const values = json.values;
 
 
-    
+
       if (DEBUG_DATABASE) debugLog('DatabaseManager executing stmt', stmt, values);
 
       const statement = this.db.prepare(stmt, values);
@@ -934,8 +935,8 @@ class DatabaseManager {
     @returns lastRowId
     */
   query(jsonStrOrJsonObj) {
-    
-    try {    
+
+    try {
       // if it's a string, parse it.  if not, use it if it's not null.
       const json = (typeof jsonStrOrJsonObj === 'string') ? JSON.parse(jsonStrOrJsonObj) : jsonStrOrJsonObj || {};
 
