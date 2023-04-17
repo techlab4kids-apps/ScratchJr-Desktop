@@ -147,6 +147,7 @@
     "SAMPLE_Bump": "Rimbalza",
     "SAMPLE_Quick Intro": "Rapida Introduzione",
     "SAMPLE_Star": "Stella",
+
     "SAMPLE_TEXT_key_character_cat": "Gatto",
     "SAMPLE_TEXT_key_character_star": "Stella",
     "SAMPLE_TEXT_key_character_teen_girl": "Ragazza",
@@ -215,6 +216,8 @@
     "CHARACTER_Ruby_Pinguino_04.svg": "Un pinguino (Ruby)",
     "CHARACTER_Ruby_Robot.svg": "Un robot (Ruby)",
     "CHARACTER_Ruby_Volpe.svg": "Una volpe (Ruby)",
+
+    "CHARACTER_fuoco_01.svg": "Fuoco",
 
     "CHARACTER_Cat.svg": "Gatto",
     "CHARACTER_Cat2.svg": "Gatto che Cammina",

@@ -16,6 +16,9 @@ if (platform === 'darwin') {
 else if (platform === 'win32') {
      iconFile =   iconFileWindows;
 }
+else {
+	iconFile =    path.resolve(__dirname, "src/icons/png/512x512.png");
+}
 
 module.exports = {
 
@@ -28,7 +31,8 @@ module.exports = {
 		],
 		linux: [
 		  "deb",
-		  "rpm"
+		  "rpm",
+			"appImage"
 		]
 	},
 	publishTargets: {	
@@ -57,7 +61,7 @@ module.exports = {
 	electronInstallerDebian: {},
 	electronInstallerRedhat: {},
 	github_repository: {
-		"owner": "jfo8000",
+		"owner": "techlab4kids",
 		"name": "ScratchJr-Desktop"
 	},
 	windowsStoreConfig: {
@@ -66,4 +70,3 @@ module.exports = {
 	}
 
 }
-  

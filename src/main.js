@@ -26,9 +26,9 @@ const util = require('util');
 
 const crypto = require('crypto');
 
-let isDev =  require('electron-is-dev');
+let isDev = require('electron-is-dev');
 
-isDev = (isDev) || process.env.DEBUG_SCRATCHJR;
+isDev = true; //(isDev) || process.env.DEBUG_SCRATCHJR;
 
 
 /* eslint-disable import/extensions */  // --> OFF
@@ -92,7 +92,6 @@ let dataStore;
 function createWindow() {
   // Create the browser window.
 
-
   win = new BrowserWindow(
     {
       fullscreen: false,
@@ -100,20 +99,35 @@ function createWindow() {
       height: 720,
       minHeight: 800,
       minWidth: 1000,
+      center: true,
       customVar: 'elephants',
-      isDebug: DEBUG
+      isDebug: DEBUG,
+      title: 'Scratch Jr (TechLAB4Kids)',
+      icon: `${__dirname}app/assets/icon/icon.png`,
+      webPreferences: {
+        devTools: true,
+        nodeIntegration: true,
+        nodeIntegrationInWorker: true,
+        contextIsolation: false,
+        preload: path.join(__dirname, 'preload.js'),
+        sandbox: false,
+        webSecurity: false,
+        allowRunningInsecureContent: true,
+        v8CacheOptions: false,
+
+      }
     });
-
-  const view = new BrowserView({
-    title: 'Scratch Jr',
-    icon: `${__dirname}app/assets/icon/icon.png`,
-    webPreferences: {
-      nodeIntegration: false
-    },
-  });
-
+  win.webContents.openDevTools();
+  // const view = new BrowserView({
+  //   title: 'Scratch Jr (TechLAB4Kids)',
+  //   icon: `${__dirname}app/assets/icon/icon.png`,
+  //   webPreferences: {
+  //     nodeIntegration: false
+  //   },
+  // });
+  // //
   dataStore = new ScratchJRDataStore(win);
-  win.setBrowserView(view);
+  // win.setBrowserView(view);
 
 
   // and load the index.html of the app.
@@ -123,6 +137,7 @@ function createWindow() {
     slashes: true,
 
   }));
+  //win.loadFile(`${__dirname}/app/index.html`);
 
   if (DEBUG_LOAD_DEVTOOLS) {
     // Open the DevTools.
@@ -150,7 +165,7 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
+app.whenReady().then(() => {
 
   createWindow();
 
