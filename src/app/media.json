@@ -89,6 +89,21 @@
       {"md5":"Cosima_Beppa.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Beppa","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
       {"md5":"Cosima_Muflone.svg","width":163,"height":240,"ext":"svg","name":"Cosima_Muflone","order":"characters,00 TL4K-Cosima","tags":["characters","00 TL4K-Cosima"]},
 
+      {"md5":"riciclo_barattolo.svg","width":163,"height":240,"ext":"svg","name":"riciclo_barattolo","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_bottiglia.svg","width":163,"height":240,"ext":"svg","name":"riciclo_bottiglia","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_bottiglie.svg","width":163,"height":240,"ext":"svg","name":"riciclo_bottiglie","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_carta.svg","width":163,"height":240,"ext":"svg","name":"riciclo_carta","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_carta.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_carta","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cellulare.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cellulare","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_elettronica.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_elettronica","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_metalli.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_metalli","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_organico.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_organico","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_plastica.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_plastica","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_cestino_vetro.svg","width":163,"height":240,"ext":"svg","name":"riciclo_cestino_vetro","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_indifferenziato.svg","width":163,"height":240,"ext":"svg","name":"riciclo_indifferenziato","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+      {"md5":"riciclo_mela.svg","width":163,"height":240,"ext":"svg","name":"riciclo_mela","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
+
+
       {"md5":"fuoco_01.svg","width":392,"height":569,"ext":"svg","name":"fuoco_01","order":"characters,00 TL4K-Vari","tags":["characters","00 TL4K-Vari"]},
 
 
