@@ -21,52 +21,53 @@ else {
 }
 
 module.exports = {
-
-	make_targets: {
-		win32: [
-		  "squirrel"
-		],
-		darwin: [
-		  "zip", "dmg"
-		],
-		linux: [
-		  "deb",
-		  "rpm",
-			"appImage"
-		]
-	},
-	publishTargets: {	
-      "win32": [
-        "github"
-      ],
-      "darwin": [
-        "github"
-      ],
-      "linux": [
-        "github"
-      ]
-	},
-	electronPackagerConfig: {
-		packageManager: "npm",
-		appCopyright: "Copyright (c) 2016, MIT",
-		icon: iconFile
-	},
-	electronWinstallerConfig: {
-		"name": "ScratchJr",
-		loadingGif: installerGifWindows,
-	    iconUrl: iconFileWindows,
-	    exe: 'ScratchJr.exe',
-	    setupIcon: iconFileWindows
-	},
-	electronInstallerDebian: {},
-	electronInstallerRedhat: {},
-	github_repository: {
-		"owner": "techlab4kids",
-		"name": "ScratchJr-Desktop"
-	},
-	windowsStoreConfig: {
-		"packageName": "",
-		"name": "ScratchJr"
-	}
-
-}
+    packagerConfig: {icon: iconFile},
+    rebuildConfig: {},
+    makers: [
+        {
+            name: 'electron-forge-maker-appimage',
+            config: {
+                options: {
+                    icon: iconFile
+                }
+            }
+        },
+        {
+            name: '@electron-forge/maker-squirrel',
+            config: {},
+        },
+        {
+            name: '@electron-forge/maker-zip',
+            platforms: ['darwin'],
+        },
+        {
+            name: '@electron-forge/maker-deb',
+            config: {},
+        },
+        {
+            name: '@electron-forge/maker-rpm',
+            config: {},
+        },
+    ],
+    plugins: [
+        {
+            name: '@electron-forge/plugin-webpack',
+            config: {
+                mainConfig: './webpack.main.config.js',
+                renderer: {
+                    config: './webpack.renderer.config.js',
+                    entryPoints: [
+                        {
+                            html: './src/index.html',
+                            js: './src/renderer.js',
+                            name: 'main_window',
+                            preload: {
+                                js: './src/preload.js',
+                            },
+                        },
+                    ],
+                },
+            },
+        },
+    ],
+};

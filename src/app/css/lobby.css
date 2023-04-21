@@ -76,7 +76,7 @@ div.frame {
     cursor: default;
     width: ${css_vh(28.65)};
     height: ${css_vh(10.03)};
-    background: url('../assets/lobby/scratchJrlogo.svg');
+    background: url('../assets/lobby/ScratchJrlogo.svg');
     background-size: 101%;
     padding: 0;
     margin: auto auto;
