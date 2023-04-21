@@ -95,9 +95,9 @@ function createWindow() {
   win = new BrowserWindow(
     {
       fullscreen: false,
-      width: 1280,
-      height: 720,
-      minHeight: 800,
+      width: 1350,
+      height: 700,
+      minHeight: 700,
       minWidth: 1000,
       center: true,
       customVar: 'elephants',
