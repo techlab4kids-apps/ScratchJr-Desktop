@@ -11,6 +11,292 @@
     "mtime": "1452884953933",
     "name": "CodingCosima",
     "id": "102",
-    "json": {"pages":["page 1"],"currentPage":"page 1","page 1":{"textstartat":36,"sprites":["Techy 1","Narciso 1","Fuoco 1","Cosima ragazza (Cosima) 1"],"md5":"Cosima_Cucina.svg","num":1,"lastSprite":"Cosima ragazza (Cosima) 1","Techy 1":{"shown":true,"type":"sprite","md5":"Techy.svg","id":"Techy 1","flip":false,"name":"Techy","angle":0,"scale":0.5,"speed":2,"defaultScale":0.5,"sounds":["pop.mp3"],"xcoor":466,"ycoor":225,"cx":47,"cy":39,"w":95,"h":78,"homex":466,"homey":225,"homescale":0.5,"homeshown":true,"homeflip":false,"scripts":[]},"Narciso 1":{"shown":true,"type":"sprite","md5":"Daffodil.svg","id":"Narciso 1","flip":false,"name":"Narciso","angle":0,"scale":0.5,"speed":2,"defaultScale":0.5,"sounds":["pop.mp3"],"xcoor":407,"ycoor":174,"cx":80,"cy":85,"w":160,"h":171,"homex":407,"homey":174,"homescale":0.5,"homeshown":true,"homeflip":false,"scripts":[[["ontouch","null",315,47],["say","BENE!",388,47],["endstack","null",453,47]]]},"Fuoco 1":{"shown":true,"type":"sprite","md5":"fuoco_01.svg","id":"Fuoco 1","flip":false,"name":"Fuoco","angle":0,"scale":0.5,"speed":2,"defaultScale":0.5,"sounds":["pop.mp3"],"xcoor":297,"ycoor":221,"cx":75,"cy":126,"w":151,"h":253,"homex":297,"homey":221,"homescale":0.5,"homeshown":true,"homeflip":false,"scripts":[[["ontouch","null",265,63],["say","ATTENZIONE!",338,63],["endstack","null",403,63]]]},"Cosima ragazza (Cosima) 1":{"shown":true,"type":"sprite","md5":"Cosima_Ragazza.svg","id":"Cosima ragazza (Cosima) 1","flip":false,"name":"Cosima ragazza (Cosima)","angle":0,"scale":0.4,"speed":2,"defaultScale":0.5,"sounds":["pop.mp3"],"xcoor":392,"ycoor":231,"cx":90,"cy":126,"w":180,"h":253,"homex":32,"homey":303,"homescale":0.5,"homeshown":true,"homeflip":false,"scripts":[[["home","null",357,28],["shrink",2,422,28],["forward",3,487,28],["forward",3,552,28],["forward",3,617,28],["forward",3,682,28],["forward",3,747,28],["up",3,812,28],["up",3,877,28]],[["onflag","null",231,122],["home","null",304,122],["shrink",2,369,122],["up",3,434,122],["forward",3,499,122],["forward",3,564,122],["forward",3,629,122],["forward",3,694,122],["forward",3,759,122]]]},"layers":["Techy 1","Narciso 1","Fuoco 1","Cosima ragazza (Cosima) 1"]}}
+    "json": {
+      "pages": [
+        "page 1"
+      ],
+      "currentPage": "page 1",
+      "page 1": {
+        "textstartat": 36,
+        "sprites": [
+          "Techy 1",
+          "Narciso 1",
+          "Fuoco 1",
+          "Cosima ragazza (Cosima) 1"
+        ],
+        "md5": "Cosima_Cucina.svg",
+        "num": 1,
+        "lastSprite": "Cosima ragazza (Cosima) 1",
+        "Techy 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "Techy.svg",
+          "id": "Techy 1",
+          "flip": false,
+          "name": "Techy",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 466,
+          "ycoor": 225,
+          "cx": 47,
+          "cy": 39,
+          "w": 95,
+          "h": 78,
+          "homex": 466,
+          "homey": 225,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": []
+        },
+        "Narciso 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "Daffodil.svg",
+          "id": "Narciso 1",
+          "flip": false,
+          "name": "Narciso",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 407,
+          "ycoor": 174,
+          "cx": 80,
+          "cy": 85,
+          "w": 160,
+          "h": 171,
+          "homex": 407,
+          "homey": 174,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "ontouch",
+                "null",
+                315,
+                47
+              ],
+              [
+                "say",
+                "BENE!",
+                388,
+                47
+              ],
+              [
+                "endstack",
+                "null",
+                453,
+                47
+              ]
+            ]
+          ]
+        },
+        "Fuoco 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "fuoco_01.svg",
+          "id": "Fuoco 1",
+          "flip": false,
+          "name": "Fuoco",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 297,
+          "ycoor": 221,
+          "cx": 75,
+          "cy": 126,
+          "w": 151,
+          "h": 253,
+          "homex": 297,
+          "homey": 221,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "ontouch",
+                "null",
+                265,
+                63
+              ],
+              [
+                "say",
+                "ATTENZIONE!",
+                338,
+                63
+              ],
+              [
+                "endstack",
+                "null",
+                403,
+                63
+              ]
+            ]
+          ]
+        },
+        "Cosima ragazza (Cosima) 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "Cosima_Ragazza.svg",
+          "id": "Cosima ragazza (Cosima) 1",
+          "flip": false,
+          "name": "Cosima ragazza (Cosima)",
+          "angle": 0,
+          "scale": 0.4,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 392,
+          "ycoor": 231,
+          "cx": 90,
+          "cy": 126,
+          "w": 180,
+          "h": 253,
+          "homex": 32,
+          "homey": 303,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "home",
+                "null",
+                357,
+                28
+              ],
+              [
+                "shrink",
+                2,
+                422,
+                28
+              ],
+              [
+                "forward",
+                3,
+                487,
+                28
+              ],
+              [
+                "forward",
+                3,
+                552,
+                28
+              ],
+              [
+                "forward",
+                3,
+                617,
+                28
+              ],
+              [
+                "forward",
+                3,
+                682,
+                28
+              ],
+              [
+                "forward",
+                3,
+                747,
+                28
+              ],
+              [
+                "up",
+                3,
+                812,
+                28
+              ],
+              [
+                "up",
+                3,
+                877,
+                28
+              ]
+            ],
+            [
+              [
+                "onflag",
+                "null",
+                231,
+                122
+              ],
+              [
+                "home",
+                "null",
+                304,
+                122
+              ],
+              [
+                "shrink",
+                2,
+                369,
+                122
+              ],
+              [
+                "up",
+                3,
+                434,
+                122
+              ],
+              [
+                "forward",
+                3,
+                499,
+                122
+              ],
+              [
+                "forward",
+                3,
+                564,
+                122
+              ],
+              [
+                "forward",
+                3,
+                629,
+                122
+              ],
+              [
+                "forward",
+                3,
+                694,
+                122
+              ],
+              [
+                "forward",
+                3,
+                759,
+                122
+              ]
+            ]
+          ]
+        },
+        "layers": [
+          "Techy 1",
+          "Narciso 1",
+          "Fuoco 1",
+          "Cosima ragazza (Cosima) 1"
+        ]
+      }
+    }
   }
 ]

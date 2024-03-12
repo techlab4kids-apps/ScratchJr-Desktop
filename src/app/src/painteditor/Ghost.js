@@ -415,7 +415,7 @@ export default class Ghost {
         if (!SVG2Canvas.isCloseDPath(elem)) {
             ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',255)';
         }
-        if (elem.id.indexOf('pathborder_image') > -1) {
+        if (elem.id && elem.id.indexOf('pathborder_image') > -1) {
             ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',255)';
         }
         if (!elem.getAttribute('fill') && !elem.getAttribute('stroke')) {

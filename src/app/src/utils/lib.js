@@ -1,7 +1,7 @@
 export var frame;  // eslint-disable-line import/no-mutable-exports
 // XXX: isTablet is legacy code that can be used to detect if we're running on a desktop browser
 // There are references to it throughout the codebase, should possibly be removed at some point
-export const isTablet = (window.orientation != 'undefined');
+export const isTablet = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 export const DEGTOR = Math.PI / 180;
 //export const WINDOW_INNER_HEIGHT = window.innerHeight;
 //export const WINDOW_INNER_WIDTH = window.innerWidth;
@@ -48,12 +48,12 @@ export function preprocess (s) {
  * Load the URL synchronously (fine because it's file://), preprocess the result and return the string.
  */
 export function preprocessAndLoad (url) {
-  
+
     var responseText = null;
     if (window.tablet) {
     	responseText = window.tablet.io_gettextresource(url);
     } else {  // hopefully unused
-  
+
     	var xmlhttp = new XMLHttpRequest();
     	xmlhttp.open('GET', url, false);
     	xmlhttp.send();
@@ -83,7 +83,7 @@ export function preprocessAndLoadCss (baseUrl, url) {
     let style = document.createElement('style');
     style.id = url;
     style.type = 'text/css';
-    
+
     if (style.styleSheet){
         style.styleSheet.cssText = cssData;
     } else {

@@ -51,7 +51,8 @@ const DEBUG_FILEIO        = DEBUG && true;
 const DEBUG_RESOURCEIO    = DEBUG && false;
 const DEBUG_CLEANASSETS   = DEBUG && false;
 const DEBUG_NYI           = DEBUG && true;
-const DEBUG_LOAD_DEVTOOLS = DEBUG && true;
+// const DEBUG_LOAD_DEVTOOLS = DEBUG && true;
+const DEBUG_LOAD_DEVTOOLS = false;
 
 
 

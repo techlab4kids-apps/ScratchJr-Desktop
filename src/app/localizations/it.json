@@ -3,6 +3,8 @@
     "QUICK_INTRO": "Breve Introduzione a ScratchJr",
     "SAMPLE_PROJECTS": "Progetti di Esempio",
     "SAMPLE_CodingInfanzia": "Conding con gli animali",
+    "SAMPLE_Coding e Alimentazione": "Coding e Alimentazione",
+    "SAMPLE_Coding e Alimentazione 2": "Coding e Alimentazione 2",
     "SAMPLE_CodingCosima": "Conding con cosima",
     "ABOUT_SCRATCHJR": "Info su ScratchJr",
     "INTERFACE_GUIDE": "Guida all'Interfaccia",
@@ -218,7 +220,7 @@
     "CHARACTER_Ruby_Volpe.svg": "Una volpe (Ruby)",
 
     "CHARACTER_fuoco_01.svg": "Fuoco",
-    
+
     "CHARACTER_riciclo_barattolo.svg": "Barattolo",
     "CHARACTER_riciclo_bottiglia.svg": "Bottiglia di plastica",
     "CHARACTER_riciclo_bottiglie.svg": "Bottiglie di vetro",
@@ -232,6 +234,8 @@
     "CHARACTER_riciclo_cestino_vetro.svg": "Cestino per il vetro",
     "CHARACTER_riciclo_indifferenziato.svg": "Rifiuti non differenziabili",
     "CHARACTER_riciclo_mela.svg": "Mela",
+
+    "CHARACTER_alimentazione_LinaFragolina.svg": "Lina Fragolina",
 
     "CHARACTER_Cat.svg": "Gatto",
     "CHARACTER_Cat2.svg": "Gatto che Cammina",
@@ -354,13 +358,17 @@
     "CHARACTER_SailBoat.svg": "Nave",
     "CHARACTER_Boat2.svg": "Nave",
     "CHARACTER_Rocket.svg": "Razzo",
+
+    "BACKGROUND_TabelloneAlimentazione.svg": "Coding per la sana alimentazione",
+    "BACKGROUND_TabelloneAlimentazione2.svg": "Coding per la sana alimentazione",
     "BACKGROUND_TabelloneAnimali.svg": "Coding con gli animali",
-    "BACKGROUND_TabelloneAnimaliVuoto.svg": "Coding con gli animali",
+    "BACKGROUND_TabelloneVuoto.svg": "Coding con gli animali vuoto",
     "BACKGROUND_Cosima_Cucina.svg": "La cucina di Cosima",
     "BACKGROUND_Cosima_Natura.svg": "La natura di Cosima",
     "BACKGROUND_Ruby_casa_leopardina_small.svg": "La casa della Leopardina",
     "BACKGROUND_Ruby_cucina.svg": "La cucina dei Robot",
     "BACKGROUND_Ruby_orto_small.svg": "L'orto delle volpi",
+
     "BACKGROUND_Farm.svg": "Fattoria",
     "BACKGROUND_Park.svg": "Parco",
     "BACKGROUND_Suburbs.svg": "Periferia",

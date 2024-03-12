@@ -1,0 +1,87 @@
+[
+  {
+    "gallery": "Samples",
+    "version": "iOSv01",
+    "thumbnail": {
+      "pagecount": 1,
+      "md5": "samples/CodingAlimentazione2.png"
+    },
+    "ctime": "2016-01-15 18:14:49",
+    "deleted": "NO",
+    "mtime": "1452884953933",
+    "name": "Coding e Alimentazione 2",
+    "id": "102",
+    "json": {
+      "pages": [
+        "page 1"
+      ],
+      "currentPage": "page 1",
+      "page 1": {
+        "textstartat": 36,
+        "sprites": [
+          "Lina Fragolina 1"
+        ],
+        "md5": "TabelloneAlimentazione2.svg",
+        "num": 1,
+        "lastSprite": "Lina Fragolina 1",
+        "Lina Fragolina 1": {
+          "shown": true,
+          "type": "sprite",
+          "md5": "alimentazione_LinaFragolina.svg",
+          "id": "Lina Fragolina 1",
+          "flip": false,
+          "name": "Lina Fragolina",
+          "angle": 0,
+          "scale": 0.5,
+          "speed": 2,
+          "defaultScale": 0.5,
+          "sounds": [
+            "pop.mp3"
+          ],
+          "xcoor": 32,
+          "ycoor": 29,
+          "cx": 75,
+          "cy": 126,
+          "w": 151,
+          "h": 253,
+          "homex": 32,
+          "homey": 29,
+          "homescale": 0.5,
+          "homeshown": true,
+          "homeflip": false,
+          "scripts": [
+            [
+              [
+                "onflag",
+                "null",
+                226,
+                45
+              ],
+              [
+                "home",
+                "null",
+                299,
+                45
+              ],
+              [
+                "forward",
+                3,
+                364,
+                45
+              ],
+              [
+                "forward",
+                3,
+                429,
+                45
+              ]
+            ]
+          ]
+        },
+        "layers": [
+          "Lina Fragolina 1"
+        ]
+      }
+    }
+  }
+]

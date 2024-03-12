@@ -1,18 +1,27 @@
 {
     "path":"./svglibrary/",
     "samples": [
+        "samples/CodingAlimentazione.txt",
+        "samples/CodingAlimentazione2.txt",
         "samples/CodingAnimali.txt",
-        "samples/CodingCosima.txt",
-    	"samples/Farm.txt",
-    	"samples/Seasons.txt",
-    	"samples/Friends.txt",
-    	"samples/Dance.txt",
-    	"samples/AnimalRace.txt",
-    	"samples/Bump.txt"
+        "samples/CodingCosima.txt"
 	],
+  "original_samples": [
+    "samples/CodingAlimentazione.txt",
+    "samples/CodingAnimali.txt",
+    "samples/CodingCosima.txt",
+    "samples/Farm.txt",
+    "samples/Seasons.txt",
+    "samples/Friends.txt",
+    "samples/Dance.txt",
+    "samples/AnimalRace.txt",
+    "samples/Bump.txt"
+  ],
     "backgrounds": [
+    	{"md5":"TabelloneAlimentazione.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAlimentazione"},
+    	{"md5":"TabelloneAlimentazione2.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAlimentazione2"},
     	{"md5":"TabelloneAnimali.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAnimali"},
-    	{"md5":"TabelloneAnimaliVuoto.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAnimaliVuoto"},
+    	{"md5":"TabelloneVuoto.svg","width":480,"height":360,"ext":"svg","name":"TabelloneVuoto"},
     	{"md5":"Cosima_Cucina.svg","width":480,"height":360,"ext":"svg","name":"Cosima_Cucina"},
     	{"md5":"Cosima_Natura.svg","width":480,"height":360,"ext":"svg","name":"Cosima_Natura"},
     	{"md5":"Ruby_casa_leopardina_small.svg","width":480,"height":360,"ext":"svg","name":"Ruby_casa_leopardina_small"},
@@ -103,10 +112,9 @@
       {"md5":"riciclo_indifferenziato.svg","width":163,"height":240,"ext":"svg","name":"riciclo_indifferenziato","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
       {"md5":"riciclo_mela.svg","width":163,"height":240,"ext":"svg","name":"riciclo_mela","order":"characters,00 TL4K-Riciclo","tags":["characters","00 TL4K-Riciclo"]},
 
+      {"md5":"alimentazione_LinaFragolina.svg","width":163,"height":240,"ext":"svg","name":"alimentazione_LinaFragolina","order":"characters,00 TL4K-Alimentazione","tags":["characters","00 TL4K-Alimentazione"]},
 
       {"md5":"fuoco_01.svg","width":392,"height":569,"ext":"svg","name":"fuoco_01","order":"characters,00 TL4K-Vari","tags":["characters","00 TL4K-Vari"]},
-
-
 
       {"md5":"Blue.svg","width":151,"height":253,"ext":"svg","name":"Tic","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Purple.svg","width":161,"height":185,"ext":"svg","name":"Tac","order":"characters,02 funky","tags":["characters","02 funky"]},

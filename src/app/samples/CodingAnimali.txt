@@ -27,7 +27,7 @@
           "Canguro (Coding) 1",
           "Koala (Coding) 1"
         ],
-        "md5": "TabelloneAnimaliVuoto.svg",
+        "md5": "TabelloneVuoto.svg",
         "num": 1,
         "lastSprite": "Granchino (Coding) 1",
         "Granchino (Coding) 1": {

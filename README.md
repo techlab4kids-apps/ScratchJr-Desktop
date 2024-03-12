@@ -111,6 +111,93 @@ This repository has the following directory structure:
 * <tt>out/</tt> - Build scripts and other executables
 * <tt>docs/</tt> - Developer Documentation
 
+## Customization
+In order to add sprites, backgrounds and samples you have to provider required svg and png files and customize media.json and localizazion files for each language you have to support.
+
+### Sprites
+You need to modify media.json and localization files.
+
+#### media.json
+Search for _sprites_ section.
+
+For each sprite you have to add a line as 
+
+    {"md5":"Techy.svg","width":400,"height":400,"ext":"svg","name":"Techy","order":"characters,00 TL4K","tags":["characters","00 TL4K"]},
+
+md5 is the name of the file in svglibrary folder
+
+For each svgfolder file there is a related png file.
+
+order and tags permit to classify sprites in the app.
+
+    "CHARACTER_Techy.svg": "Techy",
+
+#### Localization
+
+Localization requires to modify each language file required.
+
+For IT language it.json file should be modified adding a line as
+
+    "CHARACTER_Techy.svg": "Techy",
+
+Note that the key is a union of the prefix "CHARACTER_" and the md5 value used in media.json file
+
+### Backgrounds
+You need to modify media.json and localization files.
+
+#### media.json
+Search for _backgrounds_ section.
+
+For each background you have to add a line as
+
+    {"md5":"TabelloneAlimentazione.svg","width":480,"height":360,"ext":"svg","name":"TabelloneAlimentazione"},
+
+md5 is the name of the file in svglibrary folder
+
+For each svgfolder file there is a related png file.
+
+#### Localization
+
+Localization requires to modify each language file required.
+
+For IT language it.json file should be modified adding a line as
+
+    "BACKGROUND_TabelloneAlimentazione.svg": "Coding per la sana alimentazione",
+
+Note that the key is a union of the prefix "BACKGROUND_" and the md5 value used in media.json file
+
+
+### Samples
+You have to add a json structure into samples folder.
+This json structure could be extracted from the sqlite db and copied as txt content.
+
+In this structure there is a name property
+
+    "name": "Coding e Alimentazione",
+
+This name is used in the localization file.
+
+Before to create the sample file you have to create each resource you want to use (sprites, background, sounds,...).
+
+You need to modify media.json and localization files.
+
+#### media.json
+Search for _samples_ section.
+
+For each sample you have to add a line as
+
+    "samples/CodingAlimentazione.txt",
+
+#### Localization
+
+Localization requires to modify each language file required.
+
+For IT language it.json file should be modified adding a line as
+
+    "SAMPLE_Coding e Alimentazione": "Conding sulla sana alimentazione",
+
+Note that the key is a union of the prefix "SAMPLE_" and the name used in the txt sample file
+
 
 ## Acknowledgments
 

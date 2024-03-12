@@ -21,7 +21,7 @@ else {
 }
 
 module.exports = {
-    packagerConfig: {icon: iconFile},
+    packagerConfig: {icon: 'src/icons/win'},
     rebuildConfig: {},
     makers: [
         {
@@ -33,8 +33,11 @@ module.exports = {
             }
         },
         {
-            name: '@electron-forge/maker-squirrel',
-            config: {},
+            config: {
+                name: 'ScratchJr (TechLAB4Kids edition)',
+                iconUrl: 'src/icons/win/icon.ico',
+                setupIcon: 'src/icons/win/icon.ico'
+            }
         },
         {
             name: '@electron-forge/maker-zip',

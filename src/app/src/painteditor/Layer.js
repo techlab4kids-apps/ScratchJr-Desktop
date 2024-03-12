@@ -171,7 +171,7 @@ export default class Layer {
 
     static getRelated (elem) {
         var res = [];
-        if (elem.id.indexOf('pathborder_image') > -1) {
+        if (elem.id && elem.id.indexOf('pathborder_image') > -1) {
             var imageid = elem.id.substring(String('pathborder_').length, elem.id.length);
             var group = gn('group_' + imageid);
             if (group) {
