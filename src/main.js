@@ -97,38 +97,24 @@ function createWindow() {
     {
       fullscreen: false,
       width: 1350,
-      height: 700,
-      minHeight: 700,
+      height: 750,
+      minHeight: 750,
       minWidth: 1000,
       center: true,
       customVar: 'elephants',
-      isDebug: DEBUG,
-      title: 'Scratch Jr (TechLAB4Kids)',
+      isDebug: DEBUG
+    });
+
+  const view = new BrowserView({
+    title: 'Scratch Jr',
       icon: `${__dirname}app/assets/icon/icon.png`,
       webPreferences: {
-        devTools: true,
-        nodeIntegration: true,
-        nodeIntegrationInWorker: true,
-        contextIsolation: false,
-        preload: path.join(__dirname, 'preload.js'),
-        sandbox: false,
-        webSecurity: false,
-        allowRunningInsecureContent: true,
-        v8CacheOptions: false,
-
-      }
+      nodeIntegration: false
+    },
     });
-  win.webContents.openDevTools();
-  // const view = new BrowserView({
-  //   title: 'Scratch Jr (TechLAB4Kids)',
-  //   icon: `${__dirname}app/assets/icon/icon.png`,
-  //   webPreferences: {
-  //     nodeIntegration: false
-  //   },
-  // });
-  // //
+
   dataStore = new ScratchJRDataStore(win);
-  // win.setBrowserView(view);
+  win.setBrowserView(view);
 
 
   // and load the index.html of the app.
@@ -166,7 +152,7 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.on('ready', () => {
 
   createWindow();
 
