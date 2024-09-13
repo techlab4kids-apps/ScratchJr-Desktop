@@ -74,6 +74,7 @@
         {"md5":"coding_koala.svg","width":120,"height":120,"ext":"svg","name":"coding_koala","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
         {"md5":"coding_lion.svg","width":120,"height":120,"ext":"svg","name":"coding_lion ","order":"characters,00 TL4K-coding","tags":["characters","00 TL4K-coding"]},
 
+      {"md5":"Ruby.svg","width":120,"height":120,"ext":"svg","name":"Ruby ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
       {"md5":"Ruby_01.svg","width":120,"height":120,"ext":"svg","name":"Ruby_01 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
       {"md5":"Ruby_02.svg","width":120,"height":120,"ext":"svg","name":"Ruby_02 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
       {"md5":"Ruby_03.svg","width":120,"height":120,"ext":"svg","name":"Ruby_03 ","order":"characters,00 TL4K-Ruby","tags":["characters","00 TL4K-Ruby"]},
