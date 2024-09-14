@@ -12,3 +12,10 @@ src/app/src/editor/.DS_Store
 .DS_Store
 buglist.txt
 src/debug.log
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/ScratchJr-Desktop.iml
+/.idea/vcs.xml
