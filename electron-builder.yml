@@ -1,0 +1,24 @@
+
+
+appId: it.techlab4kids.ScratchJr-TL4K
+productName: ScratchJr-TL4K
+directories:
+  output: dist
+files:
+  - src/**/*
+  - node_modules/**/*
+  - package.json
+linux:
+  target:
+    - AppImage
+  category: Utility
+  desktop:
+    Name: ScratchJr-TL4K
+    GenericName: Applicazione Electron
+    Comment: ScratchJr Desktop TL4K Edition
+    Terminal: false
+    Type: Application
+    Icon: ScratchJr-TL4K
+extraResources:
+  - from: /usr/lib/x86_64-linux-gnu/libgconf-2.so.4
+    to: lib/libgconf-2.so.4
