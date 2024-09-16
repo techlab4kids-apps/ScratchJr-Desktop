@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CodebuddyPersistentProjectState">
+    <option name="additionalOptionsVisible" value="true" />
+    <option name="autoFileSelection" value="true" />
+    <option name="promptHistory">
+      <list>
+        <option value="What I have to do to upgrade dependencies and dev dependencies? Which kind of problems I have to expect?" />
+      </list>
+    </option>
+    <option name="selectedModel" value="codebuddy:GPT4_Turbo_Haiku_V7" />
+    <option name="ttsEnabled" value="false" />
+  </component>
+</project>
