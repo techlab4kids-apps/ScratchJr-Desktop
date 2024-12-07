@@ -599,7 +599,7 @@ export default class UI {
             return;
         }
         var x = localx(t, pt.x);
-        if (tb && (x < 70) && ScratchJr.isEditable()) {
+        if (tb && (x < (70 * scaleMultiplier)) && ScratchJr.isEditable()) {
             Thumbs.startDragThumb(e, tb);
         } else {
             UI.startSpriteScroll(e, tb);
@@ -629,14 +629,14 @@ export default class UI {
 
     static prepareToScroll (e) {
         e.preventDefault();
-        e.stopPropagation();
-        UI.spriteScolling(e, Events.dragthumbnail);
+        e.stopPropagation();    
+        UI.spriteScolling(e);
     }
 
     static stopScroll (e) {
         e.preventDefault();
         e.stopPropagation();
-        UI.spriteScolling(e, Events.dragthumbnail);
+        UI.spriteScolling(e);
     }
 
     static spriteScolling (e) {

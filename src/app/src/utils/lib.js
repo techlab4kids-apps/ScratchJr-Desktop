@@ -1,7 +1,18 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:4220836985.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1304329812.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1613980588.
 export var frame;  // eslint-disable-line import/no-mutable-exports
-// XXX: isTablet is legacy code that can be used to detect if we're running on a desktop browser
+
+// isTablet is legacy code that can be used to detect if we're running on a desktop browser
 // There are references to it throughout the codebase, should possibly be removed at some point
-export const isTablet = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+
+export const isTablet = (function() {
+    if (navigator.userAgent.indexOf('iPad') != -1) {
+        return true;
+    }
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+})();
+
 export const DEGTOR = Math.PI / 180;
 //export const WINDOW_INNER_HEIGHT = window.innerHeight;
 //export const WINDOW_INNER_WIDTH = window.innerWidth;

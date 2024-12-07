@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:914913807.
 ///////////////////////////////////
 //  Blocks Categories Palettes
 ///////////////////////////////////
@@ -48,9 +49,7 @@ export default class Palette {
         Palette.createCategorySelectors(parent);
         var div = newHTML('div', 'palette', parent);
         div.setAttribute('id', 'palette');
-        div.onmousedown = function (evt) {
-            Palette.paletteMouseDown(evt);
-        };
+        div[isTablet ? 'ontouchstart' : 'onmousedown'] = Palette.paletteMouseDown;
         var pc = newHTML('div', 'papercut', parent);
         newHTML('div', 'withstyle', pc);
     }
@@ -320,9 +319,7 @@ export default class Palette {
             zIndex: 8,
             visibility: 'hidden'
         });
-        div.onmousedown = function (evt) {
-            Palette.clickOnCategory(evt);
-        };
+        div[isTablet ? 'ontouchstart' : 'onmousedown'] = Palette.clickOnCategory;
     }
 
     static getPaletteSize () {
@@ -469,7 +466,7 @@ export default class Palette {
             };
         }
         if (isTablet) {
-            div.onmousedown = Palette.recordSound;
+            div.ontouchstart = Palette.recordSound;
         }
     }
 

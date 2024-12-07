@@ -43,7 +43,7 @@ export default class Scripts {
     ////////////////////////////////////////////////
 
     scriptsMouseDown (e) {
-        if (isTablet && e.touches && (e.touches.length > 1)) {
+        if (isTablet && e.type == "touchstart" && e.touches && (e.touches.length > 1)) {
             return;
         }
         if (ScratchJr.onHold) {

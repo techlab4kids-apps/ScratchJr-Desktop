@@ -117,6 +117,10 @@ export default class BlockSpecs {
 
     static getImageFrom (url, ext) {
         var img = document.createElement('img');
+        // Needed for touch events on Android
+        img.style.touchAction = 'manipulation';
+        // prevents dragging the image
+        img.draggable = false;
         img.src = url + (ext ? '.' + ext : '.png');
         if (!img.complete) {
             loadassets[img.src] = img;

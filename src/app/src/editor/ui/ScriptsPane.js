@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:890765074.
 
 import ScratchJr from '../ScratchJr';
 import Project from './Project';
@@ -267,21 +268,12 @@ export default class ScriptsPane {
     }
 
     static setDragBackgroundEvents (fcnmove, fcnup) {
-        if (isTablet) { // setDragBackgroundEvents
-            window.onmousemove = function (evt) {
+        window.ontouchmove = function (evt) {
                 fcnmove(evt);
             };
-            window.onmouseup = function (evt) {
+        window.ontouchend = function (evt) {
                 fcnup(evt);
             };
-        } else {
-            window.onmousemove = function (evt) {
-                fcnmove(evt);
-            };
-            window.onmouseup = function (evt) {
-                fcnup(evt);
-            };
-        }
     }
 
     static dragMove (e) {

@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1529393553.
 /*
 the caller should define the window event and call startDrag with the appropiate values
 */
@@ -119,21 +120,17 @@ export default class Events {
         }
         updatefcn = atdrag;
         if (isTablet) { // startDrag event setting
-            delta = 10 * scaleMultiplier;
-            window.onmousemove = function (evt) {
-                Events.mouseMove(evt);
+            delta = 20 * scaleMultiplier;
+            window.ontouchmove = function (evt) {
+                Events.touchMove(evt);
             };
-            window.onmouseup = function (evt) {
-                Events.mouseUp(evt);
+            window.ontouchend = function (evt) {
+                Events.touchEnd(evt);
             };
-            window.ontouchleave = function (evt) {
-                Events.mouseUp(evt);
-            };
-            window.ontouchcancel = function (evt) {
-                Events.mouseUp(evt);
-            };
+            window.ontouchleave = window.ontouchend;
+            window.ontouchcancel = window.ontouchend;
         } else {
-            delta = 7;
+            delta = 10;
             window.onmousemove = function (evt) {
                 Events.mouseMove(evt);
             };
@@ -163,6 +160,22 @@ export default class Events {
         fcnclick = undefined;
     }
 
+    static touchMove (e) {
+        if (e.touches.length > 1) {
+            return;
+        }
+        Events.mouseMove(e);
+    }
+
+    static touchEnd (e) {
+        if (e.touches.length > 1) {
+            return;
+        }
+        if (updatefcn) {
+            updatefcn(e, dragcanvas); // update to final position
+        }
+        Events.mouseUp(e);
+    }
     static mouseMove (e) {
         // be forgiving about the click
         var pt = Events.getTargetPoint(e);
@@ -212,8 +225,8 @@ export default class Events {
 
     static clearEvents () {
         if (isTablet) { // clearEvents
-            window.onmousemove = undefined;
-            window.onmouseup = undefined;
+            window.ontouchmove = undefined;
+            window.ontouchend = undefined;
         } else {
             window.onmousemove = function (e) {
                 e.preventDefault();

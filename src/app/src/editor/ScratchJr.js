@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:4013220911.
 import Project from './ui/Project';
 import ScratchAudio from '../utils/ScratchAudio';
 import Paint from '../painteditor/Paint';
@@ -686,24 +687,25 @@ export default class ScratchJr {
         // special request bugfix - handle keyboard input in the number window.
     	document.addEventListener('keydown', ScratchJr.onNumberKeyDown);
     	 	
+        // If using a touch screen, this prevents drag & drop to fail
+        keypad.addEventListener('touchmove', function (event) {
+            event.preventDefault();
+        });
     }
     
-    static isNumberPadKeyCode(e) {
-    	return (isFinite(event.key) || e.keyCode == 8 /*delete*/ || e.keyCode === 46 /*backspace*/);
+    static isNumberPadKeyCode (e) {
+        return (isFinite(event.key) || e.keyCode == 8 /* delete */ || e.keyCode === 46 /* backspace */);
     }
-    static onNumberKeyDown(e) {
     	
-    	
+    static onNumberKeyDown (e) {
     	if (ScratchJr.isNumberPadKeyCode(e) && document.getElementsByClassName('picokeyboard on').length > 0) {
-    	
     	    e.preventDefault();
 			e.stopPropagation();
-			if (e.keyCode == 8 /*delete*/ || e.keyCode === 46 /*backspace*/) {
+            if (e.keyCode == 8 /* delete */ || e.keyCode === 46 /* backspace */) {
 				ScratchJr.numEditDelete();
 			} else {
 				const newChar = e.key;
 				var input = activeFocus.input;
-			
 				var val = input.textContent;
 				if (editfirst) {
 					editfirst = false;
@@ -719,13 +721,9 @@ export default class ScratchJr {
 					ScratchAudio.sndFX('boing.wav');
 				} else {
 					activeFocus.setValue(val);
-
 				}
-			
 			}
-		
     	}
-    	
     }
 
     static eatEvent (e) {

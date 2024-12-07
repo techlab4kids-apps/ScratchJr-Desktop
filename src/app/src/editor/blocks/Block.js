@@ -1,5 +1,22 @@
 import BlockSpecs from './BlockSpecs';
+import BlockArg from './BlockArg';// Suggested code may be subject to a license. Learn more: ~LicenseLog:4264894449.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:3019825016.
+import BlockSpecs from './BlockSpecs';
 import BlockArg from './BlockArg';
+import ScratchJr from '../ScratchJr';
+import {setProps, setCanvasSize, scaleMultiplier} from '../../utils/lib';
+import { isTouchDevice } from '../../utils/browser'; // Import isTouchDevice
+
+export default class Block {
+    constructor (spec, isPalette, scale) {
+        this.div = document.createElement('div');
+
+        // Top-level block parent shouldn't accept pointer events
+        setProps(this.div.style, {
+            touchAction: isTouchDevice() ? 'none' : '', // Set touchAction for touch devices
+            pointerEvents: 'none'
+        });
+
 import ScratchJr from '../ScratchJr';
 import {setProps, setCanvasSize, scaleMultiplier} from '../../utils/lib';
 

@@ -1,5 +1,6 @@
 import ScratchJr from '../ScratchJr';
-import BlockSpecs from './BlockSpecs';
+import BlockSpecs from './Bloimport '../../utils/dragdropTouch';
+ckSpecs';
 import Menu from './Menu';
 import Undo from '../ui/Undo';
 import {setCanvasSize, setProps, writeText, scaleMultiplier,
