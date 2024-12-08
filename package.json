@@ -5,7 +5,9 @@
     "description": "ScratchJr Desktop Edition",
     "main": "src/main.js",
     "scripts": {
-        "start": "electron-forge start",
+        "build": "babel src -d dist",
+        "start": "npm run build && electron .",
+        "forge-start": "electron-forge start",
         "startWeb": "webpack-dev-server",
         "buildWeb": "webpack",
         "debugMain": "electron-forge start -i",
@@ -26,25 +28,27 @@
     "config": {
         "forge": "./forge.config.js"
     },
-    
     "dependencies": {
         "electron-compile": "^6.4.2",
         "electron-is-dev": "^0.3.0",
         "electron-squirrel-startup": "^1.0.0",
+        "hoek": "^4.2.1",
         "intl": "^1.2.5",
         "intl-messageformat": "^2.2.0",
         "jszip": "^3.1.5",
         "snapsvg": "^0.5.1",
-        "sql.js": "^0.4.0",
-        "hoek": "^4.2.1"
+        "sql.js": "^0.4.0"
     },
     "devDependencies": {
+        "@babel/cli": "^7.26.4",
+        "@babel/core": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "@reforged/maker-appimage": "^4.0.2",
         "babel-plugin-transform-async-to-generator": "^6.24.1",
         "babel-preset-env": "^1.6.1",
         "babel-preset-react": "^6.24.1",
         "electron-forge": "^4.3.0",
-        "electron-prebuilt-compile": "1.8.2-beta.3",
-	"@reforged/maker-appimage": "^4.0.2"
+        "electron-prebuilt-compile": "1.8.2-beta.3"
     },
     "build": {
         "linux": {

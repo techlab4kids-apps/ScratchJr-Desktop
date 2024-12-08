@@ -1,6 +1,6 @@
 import ScratchJr from '../ScratchJr';
-import BlockSpecs from './Bloimport '../../utils/dragdropTouch';
-ckSpecs';
+import BlockSpecs from './BlockSpecs';
+//import '../../utils/dragdropTouch';
 import Menu from './Menu';
 import Undo from '../ui/Undo';
 import {setCanvasSize, setProps, writeText, scaleMultiplier,
@@ -102,18 +102,18 @@ export default class BlockArg {
         var str = this.argValue.toString();
         if (this.daddy.inpalette) {
             return this.addLabel(str, false);
-        } 
+        }
         return this.addNumArgument(str);
-        
+
     }
 
     addTextArg () {
         var str = this.argValue.toString();
         if (this.daddy.inpalette) {
             return this.addLabel(str, true);
-        } 
+        }
         return this.addTextArgument(str, true);
-        
+
     }
 
     addLabel (str, isText) {

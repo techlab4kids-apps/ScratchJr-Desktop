@@ -1,24 +1,19 @@
 import BlockSpecs from './BlockSpecs';
-import BlockArg from './BlockArg';// Suggested code may be subject to a license. Learn more: ~LicenseLog:4264894449.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:3019825016.
-import BlockSpecs from './BlockSpecs';
 import BlockArg from './BlockArg';
 import ScratchJr from '../ScratchJr';
 import {setProps, setCanvasSize, scaleMultiplier} from '../../utils/lib';
-import { isTouchDevice } from '../../utils/browser'; // Import isTouchDevice
+// import { isTouchDevice } from '../../utils/browser'; // Import isTouchDevice
 
-export default class Block {
-    constructor (spec, isPalette, scale) {
-        this.div = document.createElement('div');
+// export default class Block {
+//     constructor (spec, isPalette, scale) {
+//         this.div = document.createElement('div');
+//
+//         // Top-level block parent shouldn't accept pointer events
+//         setProps(this.div.style, {
+//             touchAction: isTouchDevice() ? 'none' : '', // Set touchAction for touch devices
+//             pointerEvents: 'none'
+//         });
 
-        // Top-level block parent shouldn't accept pointer events
-        setProps(this.div.style, {
-            touchAction: isTouchDevice() ? 'none' : '', // Set touchAction for touch devices
-            pointerEvents: 'none'
-        });
-
-import ScratchJr from '../ScratchJr';
-import {setProps, setCanvasSize, scaleMultiplier} from '../../utils/lib';
 
 export default class Block {
     constructor (spec, isPalette, scale) {
@@ -96,7 +91,7 @@ export default class Block {
         this.type = 'block';
         this.arg = null;
         this.daddy = null;
-        this.scale = scale || 1;  
+        this.scale = scale || 1;
         this.repeatCounter = -1;
         this.originalCount = -1;
         this.threads = [];
@@ -365,9 +360,9 @@ export default class Block {
                 ['flow', false, this.blockshape.width / this.scale / window.devicePixelRatio - this.notchSize() - 1,
                     this.blockshape.height / this.scale / window.devicePixelRatio - 33]];
         }
-        
+
         return [['flow', true, 0, h / 2], ['flow', false, w - this.notchSize(), h / 2]];
-        
+
     }
 
     notchSize () {
