@@ -21,6 +21,7 @@ export default class Block {
 
         // Top-level block parent shouldn't accept pointer events
         setProps(this.div.style, {
+            // touchAction: isTouchDevice() ? 'none' : '', // Set touchAction for touch devices
             pointerEvents: 'none'
         });
 

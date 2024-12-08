@@ -95,16 +95,22 @@ export default class Events {
     // which causes delays while the content is reflowed, we create a
     // small drag div that is a parent of frame that the dragging block
     // can be a child of. This improves dragging performance.
-    static init () {
+    static init() {
         dragDiv = document.createElement('div');
         dragDiv.id = 'dragDiv';
         dragDiv.style.position = 'absolute';
-        dragDiv.style.width = '0px'; // size doesn't matter since children float
+        dragDiv.style.width = '0px';
         dragDiv.style.height = '0px';
-        dragDiv.style.zIndex = 7001; // slightly higher than ScratchJr.dragginLayer
+        dragDiv.style.zIndex = 7001;
+
+        // Prevent default touch behaviors
+        dragDiv.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+        dragDiv.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
         var frameDiv = gn('frame');
         frameDiv.appendChild(dragDiv);
     }
+
     static startDrag (e, c, atstart, atend, atdrag, atclick, athold) {
         dragged = false;
         var pt = Events.getTargetPoint(e);
@@ -119,24 +125,18 @@ export default class Events {
             Events.holdit(c, athold);
         }
         updatefcn = atdrag;
-        if (isTablet) { // startDrag event setting
+
+        if (isTablet) {
             delta = 20 * scaleMultiplier;
-            window.ontouchmove = function (evt) {
-                Events.touchMove(evt);
-            };
-            window.ontouchend = function (evt) {
-                Events.touchEnd(evt);
-            };
-            window.ontouchleave = window.ontouchend;
-            window.ontouchcancel = window.ontouchend;
+            // Use addEventListener instead of on* properties
+            window.addEventListener('touchmove', Events.touchMove, { passive: false });
+            window.addEventListener('touchend', Events.touchEnd);
+            window.addEventListener('touchcancel', Events.touchEnd);
+            window.addEventListener('touchleave', Events.touchEnd);
         } else {
             delta = 10;
-            window.onmousemove = function (evt) {
-                Events.mouseMove(evt);
-            };
-            window.onmouseup = function (evt) {
-                Events.mouseUp(evt);
-            };
+            window.addEventListener('mousemove', Events.mouseMove);
+            window.addEventListener('mouseup', Events.mouseUp);
         }
     }
 
@@ -161,10 +161,28 @@ export default class Events {
     }
 
     static touchMove (e) {
-        if (e.touches.length > 1) {
+        e.preventDefault(); // Prevent scrolling while dragging
+
+        if (e.touches.length !== 1) {
+            // Store current position before ending the drag
+            if (updatefcn) {
+                updatefcn(e, dragcanvas);
+            }
+            Events.touchEnd(e);
             return;
         }
-        Events.mouseMove(e);
+
+        // Convert touch event to mouse-like event
+        const touch = e.touches[0];
+        const mouseEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            preventDefault: () => e.preventDefault(),
+            stopPropagation: () => e.stopPropagation(),
+            target: touch.target
+        };
+
+        Events.mouseMove(mouseEvent);
     }
 
     static touchEnd (e) {
@@ -224,14 +242,14 @@ export default class Events {
     }
 
     static clearEvents () {
-        if (isTablet) { // clearEvents
-            window.ontouchmove = undefined;
-            window.ontouchend = undefined;
+        if (isTablet) {
+            window.removeEventListener('touchmove', Events.touchMove);
+            window.removeEventListener('touchend', Events.touchEnd);
+            window.removeEventListener('touchcancel', Events.touchEnd);
+            window.removeEventListener('touchleave', Events.touchEnd);
         } else {
-            window.onmousemove = function (e) {
-                e.preventDefault();
-            };
-            window.onmouseup = undefined;
+            window.removeEventListener('mousemove', Events.mouseMove);
+            window.removeEventListener('mouseup', Events.mouseUp);
         }
     }
 
@@ -267,18 +285,43 @@ export default class Events {
         el.style.webkitTransform = 'translate3d(' + el.left + 'px,' + el.top + 'px, 0)';
     }
 
+    static isTouchDevice() {
+        return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+    }
+
+    static getEventCoordinates(e) {
+        if (e.touches && e.touches.length) {
+            return {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY
+            };
+        }
+        if (e.changedTouches && e.changedTouches.length) {
+            return {
+                x: e.changedTouches[0].clientX,
+                y: e.changedTouches[0].clientY
+            };
+        }
+        return {
+            x: e.clientX,
+            y: e.clientY
+        };
+    }
+
 
     /*
     .m41 – corresponds to the ‘x’ value of a WebKitCSSMatrix
     .m42 – corresponds to the ‘y’ value of a WebKitCSSMatrix
-    
-    
-    The clientX read-only property of the MouseEvent interface provides the horizontal 
-    coordinate within the application's client area at which the event occurred 
-    (as opposed to the coordinates within the page). 
-    
-    For example, clicking in the top-left corner of the client area will always 
-    result in a mouse event with a clientX value of 0, regardless of whether the 
+
+
+    The clientX read-only property of the MouseEvent interface provides the horizontal
+    coordinate within the application's client area at which the event occurred
+    (as opposed to the coordinates within the page).
+
+    For example, clicking in the top-left corner of the client area will always
+    result in a mouse event with a clientX value of 0, regardless of whether the
     page is scrolled horizontally.
     */
 
