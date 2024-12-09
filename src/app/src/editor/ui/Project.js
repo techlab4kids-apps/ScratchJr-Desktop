@@ -83,10 +83,10 @@ export default class Project {
         ScratchJr.log('all UI assets recieved - procced to call server', ScratchJr.getTime(), 'sec');
         Project.setProgress(20);
         UI.layout();
-        IO.getObject(ScratchJr.currentProject, Project.dataRecieved);
+        IO.getObject(ScratchJr.currentProject, Project.dataReceived);
     }
 
-    static dataRecieved (str) {
+    static dataReceived (str) {
         ScratchJr.log('got project metadata', ScratchJr.getTime(), 'sec');
         var data = JSON.parse(str)[0];
         metadata = IO.parseProjectData(data);

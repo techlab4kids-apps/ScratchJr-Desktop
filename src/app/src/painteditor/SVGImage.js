@@ -148,6 +148,7 @@ export default class SVGImage {
         var newcnv = document.createElement('canvas');
         setCanvasSize(newcnv, ctx.canvas.width, ctx.canvas.height);
         var newctx = newcnv.getContext('2d');
+        newctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         var dataurl = image.getAttribute('xlink:href');
         var img = document.createElement('img');
         img.src = dataurl;
