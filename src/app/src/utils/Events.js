@@ -112,6 +112,12 @@ export default class Events {
     }
 
     static startDrag (e, c, atstart, atend, atdrag, atclick, athold) {
+        // Prevent default behavior for touch events
+        if (e.type.startsWith('touch')) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         dragged = false;
         var pt = Events.getTargetPoint(e);
         dragmousex = pt.x;
@@ -128,7 +134,6 @@ export default class Events {
 
         if (isTablet) {
             delta = 20 * scaleMultiplier;
-            // Use addEventListener instead of on* properties
             window.addEventListener('touchmove', Events.touchMove, { passive: false });
             window.addEventListener('touchend', Events.touchEnd);
             window.addEventListener('touchcancel', Events.touchEnd);
@@ -138,6 +143,33 @@ export default class Events {
             window.addEventListener('mousemove', Events.mouseMove);
             window.addEventListener('mouseup', Events.mouseUp);
         }
+    }
+
+    static touchMove (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (e.touches.length !== 1) {
+            if (updatefcn) {
+                updatefcn(e, dragcanvas);
+            }
+            Events.touchEnd(e);
+            return;
+        }
+
+        // Convert touch event to mouse-like event with proper coordinates
+        const touch = e.touches[0];
+        const mouseEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            pageX: touch.pageX,
+            pageY: touch.pageY,
+            preventDefault: () => e.preventDefault(),
+            stopPropagation: () => e.stopPropagation(),
+            target: touch.target
+        };
+
+        Events.mouseMove(mouseEvent);
     }
 
     static holdit (c, fcn) {
@@ -158,31 +190,6 @@ export default class Events {
         fcnend = undefined;
         updatefcn = undefined;
         fcnclick = undefined;
-    }
-
-    static touchMove (e) {
-        e.preventDefault(); // Prevent scrolling while dragging
-
-        if (e.touches.length !== 1) {
-            // Store current position before ending the drag
-            if (updatefcn) {
-                updatefcn(e, dragcanvas);
-            }
-            Events.touchEnd(e);
-            return;
-        }
-
-        // Convert touch event to mouse-like event
-        const touch = e.touches[0];
-        const mouseEvent = {
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            preventDefault: () => e.preventDefault(),
-            stopPropagation: () => e.stopPropagation(),
-            target: touch.target
-        };
-
-        Events.mouseMove(mouseEvent);
     }
 
     static touchEnd (e) {

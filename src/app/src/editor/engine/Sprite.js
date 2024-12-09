@@ -1,10 +1,17 @@
 ////////////////////////////////////////////////////////////
+
 // Sprites
+
 // Loading and Creation Strategy
+
 //  a. Set data variables
+
 //  b. Load SVG as IMG
+
 //  c. Load SVG as text
+
 //  d. Create Mask for pixel detection and cache it on the browser
+
 ////////////////////////////////////////////////////////////
 
 import ScratchJr from '../ScratchJr';
@@ -24,22 +31,59 @@ import Events from '../../utils/Events';
 import Localization from '../../utils/Localization';
 import ScratchAudio from '../../utils/ScratchAudio';
 import Scripts from '../ui/Scripts';
-import {newHTML, newDiv, newP, gn,
+import {
+    newHTML, newDiv, newP, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
     DEGTOR, getIdFor, setProps, isTablet, isiOS,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
-    globaly, globalx, rgbToHex} from '../../utils/lib';
+    globaly, globalx, rgbToHex
+} from '../../utils/lib';
 
 export default class Sprite {
-    constructor (attr, whenDone) {
+
+    constructor(attr, whenDone) {
         if (attr.type == 'sprite') {
             this.createSprite(attr.page, attr.md5, attr.id, attr, whenDone);
         } else {
             this.createText(attr, whenDone);
         }
+        this.initDragAndDrop();
     }
 
-    createSprite (page, md5, id, attr, fcn) {
+    initDragAndDrop() {
+        this.div.addEventListener('mousedown', this.onDragStart.bind(this));
+        this.div.addEventListener('touchstart', this.onDragStart.bind(this), {passive: false});
+        document.addEventListener('mousemove', this.onDragMove.bind(this));
+        document.addEventListener('touchmove', this.onDragMove.bind(this), {passive: false});
+        document.addEventListener('mouseup', this.onDragEnd.bind(this));
+        document.addEventListener('touchend', this.onDragEnd.bind(this));
+    }
+
+    onDragStart(event) {
+        event.preventDefault();
+        const isTouch = event.type === 'touchstart';
+        const point = isTouch ? event.touches[0] : event;
+        this.dragging = true;
+        this.startX = point.clientX;
+        this.startY = point.clientY;
+        this.initialX = this.xcoor;
+        this.initialY = this.ycoor;
+    }
+
+    onDragMove(event) {
+        if (!this.dragging) return;
+        const isTouch = event.type === 'touchmove';
+        const point = isTouch ? event.touches[0] : event;
+        const deltaX = point.clientX - this.startX;
+        const deltaY = point.clientY - this.startY;
+        this.setPos(this.initialX + deltaX, this.initialY + deltaY);
+    }
+
+    onDragEnd() {
+        this.dragging = false;
+    }
+
+    createSprite(page, md5, id, attr, fcn) {
         ScratchJr.storyStart('Sprite.prototype.createSprite');
         this.div = document.createElement('div');
         setProps(this.div.style, {
@@ -47,7 +91,6 @@ export default class Sprite {
             left: '0px',
             top: '0px'
         });
-        //document.createElement('img');
         this.div.owner = this;
         this.div.id = id;
         this.id = id;
@@ -68,13 +111,14 @@ export default class Sprite {
         var me = this;
         page.div.appendChild(this.div);
         this.div.style.visibility = 'hidden';
-        this.getAsset(gotImage); // sets the SVG and the image
-        function gotImage (dataurl) {
+        this.getAsset(gotImage);
+
+        function gotImage(dataurl) {
             me.setCostume(dataurl, fcn);
         }
     }
 
-    getAsset (whenDone) {
+    getAsset(whenDone) {
         var md5 = this.md5;
         var spr = this;
         var url = (MediaLib.keys[md5]) ? MediaLib.path + md5 : (md5.indexOf('/') < 0) ? iOS.path + md5 : md5;
@@ -84,14 +128,16 @@ export default class Sprite {
         } else {
             iOS.getmedia(md5, nextStep);
         }
-        function nextStep (base64) {
+
+        function nextStep(base64) {
             doNext(atob(base64));
         }
-        function doNext (str) {
+
+        function doNext(str) {
             str = str.replace(/>\s*</g, '><');
             spr.setSVG(str);
             if ((str.indexOf('xlink:href') < 0) && iOS.path) {
-                whenDone(url); // does not have embedded images
+                whenDone(url);
             } else {
                 var base64 = IO.getImageDataURL(spr.md5, btoa(str));
                 IO.getImagesInSVG(str, function () {
@@ -101,7 +147,7 @@ export default class Sprite {
         }
     }
 
-    setSVG (str) {
+    setSVG(str) {
         var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
         var extxml = document.importNode(xmlDoc.documentElement, true);
         if (extxml.childNodes[0].nodeName == '#comment') {
@@ -110,7 +156,7 @@ export default class Sprite {
         this.svg = extxml;
     }
 
-    setCostume (dataurl, fcn) {
+    setCostume(dataurl, fcn) {
         var img = document.createElement('img');
         img.src = dataurl;
         this.img = img;
@@ -132,7 +178,7 @@ export default class Sprite {
         }
     }
 
-    displaySprite (whenDone) {
+    displaySprite(whenDone) {
         var w = this.img.width;
         var h = this.img.height;
         this.div.style.width = this.img.width + 'px';
@@ -145,7 +191,7 @@ export default class Sprite {
         this.doRender(whenDone);
     }
 
-    doRender (whenDone) {
+    doRender(whenDone) {
         this.drawBorder(); // canvas draw border
         this.render();
         SVG2Canvas.drawInCanvas(this); // canvas draws mask for pixel detection
@@ -156,7 +202,7 @@ export default class Sprite {
         }
     }
 
-    drawBorder () {
+    drawBorder() {
         // TODO: Merge these to get better thumbnail rendering on iOS
         var w, h, extxml;
         if (isAndroid) {
@@ -183,7 +229,7 @@ export default class Sprite {
     // sprite thumbnail
     /////////////////////////////////////
 
-    spriteThumbnail (p) {
+    spriteThumbnail(p) {
         var tb = newHTML('div', 'spritethumb off', p);
         tb.setAttribute('id', getIdFor('spritethumb'));
         tb.type = 'spritethumb';
@@ -205,7 +251,7 @@ export default class Sprite {
         return tb;
     }
 
-    updateSpriteThumb () {
+    updateSpriteThumb() {
         var tb = this.thumbnail;
         if (!tb) {
             return;
@@ -215,7 +261,7 @@ export default class Sprite {
         tb.childNodes[1].textContent = this.name;
     }
 
-    drawMyImage (cnv, w, h) {
+    drawMyImage(cnv, w, h) {
         if (!this.img) {
             return;
         }
@@ -250,17 +296,16 @@ export default class Sprite {
     // sprite Primitives
     //////////////////////////////////////////////////////////////////////////////
 
-    goHome () {
+    goHome() {
         this.setPos(this.homex, this.homey);
-        this.scale = this.homescale;
+        this.setScaleTo(this.homescale);           // Use setScaleTo instead of direct assignment
         this.shown = this.homeshown;
-        //	this.flip = this.homeflip;  // kept here just in case we want it
         this.div.style.opacity = this.shown ? 1 : 0;
         this.setHeading(0);
         this.render();
     }
 
-    touchingAny () {
+    touchingAny() {
         if (!this.shown) {
             return false;
         }
@@ -296,7 +341,7 @@ export default class Sprite {
         return false;
     }
 
-    verifyHit (other) {
+    verifyHit(other) {
         var ctx = ScratchJr.workingCanvas.getContext('2d');
         var ctx2 = ScratchJr.workingCanvas2.getContext('2d');
         ctx.clearRect(0, 0, 480, 360);
@@ -342,31 +387,25 @@ export default class Sprite {
         return false;
     }
 
-    getAlpha (data, node, w) {
+    getAlpha(data, node, w) {
         return data[(node.x * 4) + node.y * w * 4 + 3];
     }
 
-    setHeading (angle) {
+    setHeading(angle) {
         this.angle = angle % 360;
         this.render();
     }
 
-    setPos (dx, dy) {
-        this.dirx = ((dx - this.xcoor) == 0) ? 1 : (dx - this.xcoor) / Math.abs(dx - this.xcoor);
-        this.diry = ((dy - this.ycoor) == 0) ? 1 : (dy - this.ycoor) / Math.abs(dy - this.ycoor);
+    setPos(dx, dy) {
         this.xcoor = dx;
         this.ycoor = dy;
-        this.wrap();
         this.render();
         setProps(this.div.style, {
-            position: 'absolute',
-            left: '0px',
-            top: '0px'
+            transform: `translate3d(${this.xcoor - this.cx * this.scale}px, ${this.ycoor - this.cy * this.scale}px, 0px)`
         });
-        this.updateBubble();
     }
 
-    wrap () {
+    wrap() {
         if (this.type == 'text') {
             this.wrapText();
         } else {
@@ -374,7 +413,7 @@ export default class Sprite {
         }
     }
 
-    wrapChar () {
+    wrapChar() {
         if (this.xcoor < 0) {
             this.xcoor = 480 + this.xcoor;
         }
@@ -389,7 +428,7 @@ export default class Sprite {
         }
     }
 
-    wrapText () {
+    wrapText() {
         var max = this.cx > 480 ? this.cx : 480;
         var min = this.cx > 480 ? 480 - this.cx : 0;
         if (this.xcoor < min) {
@@ -406,54 +445,21 @@ export default class Sprite {
         }
     }
 
-    render () {
-        // TODO: Merge these to get better thumbnail rendering on iOS
-        var dx, dy, mtx;
-        if (isAndroid) {
-            mtx = '';
-            if (this.img) {
-                dx = this.xcoor - this.cx * this.scale;
-                dy = this.ycoor - this.cy * this.scale;
-                mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
-                mtx += ' rotate(' + this.angle + 'deg)';
-                if (this.flip) {
-                    mtx += ' scale(-1, 1)';
-                } else {
-                    mtx += ' scale(1, 1)';
-                }
-                var w = (this.originalImg.width * this.scale);
-                var h = (this.originalImg.height * this.scale);
-                this.div.style.width = w + 'px';
-                this.div.style.height = h + 'px';
-                if (this.border) {
-                    this.border.style.width = w + 'px';
-                    this.border.style.height = h + 'px';
-                }
-                this.img.style.width = w + 'px';
-                this.img.style.height = h + 'px';
+    render() {
+        if (this.img) {
+            var mtx = `translate3d(${this.xcoor - this.cx * this.scale}px, ${this.ycoor - this.cy * this.scale}px, 0px)`;
+            if (this.flip) {
+                mtx += ` scale(-${this.scale}, ${this.scale})`;
             } else {
-                dx = this.xcoor - this.cx;
-                dy = this.ycoor - this.cy;
-                mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
+                mtx += ` scale(${this.scale}, ${this.scale})`;
             }
-            this.setTransform(mtx);
-        } else {
-            dx = this.xcoor - this.cx;
-            dy = this.ycoor - this.cy;
-            mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
-            if (this.img) {
-                mtx += ' rotate(' + this.angle + 'deg)';
-                if (this.flip) {
-                    mtx += 'scale(' + -this.scale + ', ' + this.scale + ')';
-                } else {
-                    mtx += 'scale(' + this.scale + ', ' + this.scale + ')';
-                }
-            }
-            this.setTransform(mtx);
+            this.div.style.transform = mtx;
+            this.div.style.width = `${this.w * this.scale}px`;
+            this.div.style.height = `${this.h * this.scale}px`;
         }
     }
 
-    select () {
+    select() {
         if (this.borderOn) {
             return;
         }
@@ -479,7 +485,7 @@ export default class Sprite {
         this.render();
     }
 
-    unselect () {
+    unselect() {
         if (!this.borderOn) {
             return;
         }
@@ -490,40 +496,38 @@ export default class Sprite {
         this.borderOn = false;
     }
 
-    setTransform (transform) {
+    setTransform(transform) {
         this.div.style.webkitTransform = transform;
     }
 
-    screenLeft () {
+    screenLeft() {
         return Math.round(this.xcoor - this.cx * this.scale);
     }
 
-    screenTop () {
+    screenTop() {
         return Math.round(this.ycoor - this.cy * this.scale);
     }
 
-    noScaleFor () {
+    noScaleFor() {
         this.setScaleTo(this.defaultScale);
     }
 
-    changeSizeBy (num) {
-        var n = Number(num) + Number(this.scale) * 100;
-        this.scale = this.getScale(n / 100);
-        this.setPos(this.xcoor, this.ycoor);
-        this.render();
+    changeSizeBy(num) {
+        let newScale = this.scale + (num / 100);   // If num is a percentage increment
+        this.setScaleTo(newScale);
     }
 
-    setScaleTo (n) {
-        n = this.getScale(n);
-        if (n == this.scale) {
-            return;
+    setScaleTo(n) {
+        // n is the desired scale
+        const clamped = this.getScale(n);
+        if (clamped !== this.scale) {
+            this.scale = clamped;
+            this.setPos(this.xcoor, this.ycoor);
+            this.render();
         }
-        this.scale = n;
-        this.setPos(this.xcoor, this.ycoor);
-        this.render();
     }
 
-    getScale (n) {
+    getScale(n) {
         var mins = Math.max(Math.max(this.w, this.h) * n, 36);
         var maxs = Math.min(Math.min(this.w, this.h) * n, 360);
         if (mins == 36) {
@@ -535,7 +539,7 @@ export default class Sprite {
         return n;
     }
 
-    getBox () {
+    getBox() {
         var box = {
             x: this.screenLeft(),
             y: this.screenTop(),
@@ -545,7 +549,7 @@ export default class Sprite {
         return box;
     }
 
-    getBoxWithEffects () {
+    getBoxWithEffects() {
         if (this.type == 'text') {
             return new Rectangle(this.screenLeft(), this.screenTop(), this.w * this.scale, this.h * this.scale);
         }
@@ -560,7 +564,7 @@ export default class Sprite {
     // Balloon
     //////////////////////////////////////////////////
 
-    closeBalloon () {
+    closeBalloon() {
         if (!this.balloon) {
             return;
         }
@@ -568,7 +572,7 @@ export default class Sprite {
         this.balloon = undefined;
     }
 
-    openBalloon (label) {
+    openBalloon(label) {
         if (this.balloon) {
             this.closeBalloon();
         }
@@ -624,7 +628,7 @@ export default class Sprite {
         this.drawBalloon();
     }
 
-    updateBubble () {
+    updateBubble() {
         if (this.balloon == null) {
             return;
         }
@@ -644,7 +648,7 @@ export default class Sprite {
         this.drawBalloon();
     }
 
-    drawBalloon () {
+    drawBalloon() {
         var img = this.balloon.childNodes[0];
         var w = this.balloon.offsetWidth;
         var h = this.balloon.offsetHeight;
@@ -678,7 +682,7 @@ export default class Sprite {
     // Sprite rendering
     ////////////////////////////////////
 
-    stamp (ctx, deltax, deltay) {
+    stamp(ctx, deltax, deltay) {
         var w = this.outline.width * this.scale;
         var h = this.outline.height * this.scale;
         var dx = deltax ? deltax : 0;
@@ -697,7 +701,7 @@ export default class Sprite {
     // Text Creation
     /////////////////////////////////////
 
-    createText (attr, whenDone) {
+    createText(attr, whenDone) {
         var page = attr.page;
         setProps(this, attr);
         this.div = newHTML('p', 'textsprite', page.div);
@@ -735,7 +739,7 @@ export default class Sprite {
         }
     }
 
-    setTextBox () {
+    setTextBox() {
         var sform = document.forms.activetextbox;
         sform.textsprite = this;
         var box = this.getBox();
@@ -799,7 +803,7 @@ export default class Sprite {
         }
     }
 
-    unfocusText () {
+    unfocusText() {
         ScratchJr.blur();
         document.body.scrollTop = 0;
         document.body.scrollLeft = 0;
@@ -836,7 +840,7 @@ export default class Sprite {
         }
     }
 
-    deleteText (record) {
+    deleteText(record) {
         var id = this.id;
         var page = ScratchJr.stage.currentPage;
         page.textstartat = (this.ycoor + (this.fontsize * 1.35)) > 360 ? 36 : this.ycoor;
@@ -861,7 +865,7 @@ export default class Sprite {
         }
     }
 
-    noChars (str) {
+    noChars(str) {
         for (var i = 0; i < str.length; i++) {
             if (str[i] != ' ') {
                 return false;
@@ -870,13 +874,13 @@ export default class Sprite {
         return true;
     }
 
-    contractText () {
+    contractText() {
         var form = document.forms.activetextbox;
         this.str = form.typing.value.substring(0, form.typing.maxLength);
         this.recalculateText();
     }
 
-    clickOnText (e) {
+    clickOnText(e) {
         e.stopPropagation();
         this.setTextBox();
         gn('textbox').style.visibility = 'visible';
@@ -884,7 +888,7 @@ export default class Sprite {
         this.activateInput();
     }
 
-    activateInput () {
+    activateInput() {
         this.oldvalue = this.str;
         var ti = document.forms.activetextbox.typing;
         gn('textbox').style.visibility = 'visible';
@@ -920,7 +924,7 @@ export default class Sprite {
         }
     }
 
-    handleWrite (e) {
+    handleWrite(e) {
         var key = e.keyCode || e.which;
         var ti = e.target;
         if (key == 13) {
@@ -934,7 +938,7 @@ export default class Sprite {
         }
     }
 
-    handleKeyUp (e) {
+    handleKeyUp(e) {
         var ti = e.target;
         if (!(ti.parentNode).textsprite) {
             return;
@@ -942,14 +946,14 @@ export default class Sprite {
         (ti.parentNode).textsprite.str = ti.value;
     }
 
-    deactivateInput () {
+    deactivateInput() {
         var ti = document.forms.activetextbox.typing;
         ti.onblur = undefined;
         ti.onkeypress = undefined;
         ti.onsubmit = undefined;
     }
 
-    activate () {
+    activate() {
         var list = fitInRect(this.w, this.h, ScriptsPane.watermark.offsetWidth, ScriptsPane.watermark.offsetHeight);
         var div = ScriptsPane.watermark;
         while (div.childElementCount > 0) {
@@ -967,7 +971,7 @@ export default class Sprite {
         setProps(img.style, attr);
     }
 
-    getSVGimage (svg) {
+    getSVGimage(svg) {
         var img = document.createElement('img');
         var str = (new XMLSerializer()).serializeToString(svg);
         str = str.replace(/ href="data:image/g, ' xlink:href="data:image');
@@ -979,12 +983,12 @@ export default class Sprite {
     // Text fcn
     ////////////////////////////////////////////////
 
-    setColor (c) {
+    setColor(c) {
         this.color = c;
         this.div.style.color = this.color;
     }
 
-    setFontSize (n) {
+    setFontSize(n) {
         if (n < 12) {
             n = 12;
         }
@@ -994,7 +998,7 @@ export default class Sprite {
         this.fontsize = n;
     }
 
-    recalculateText () {
+    recalculateText() {
         this.div.style.color = this.color;
         this.div.style.fontSize = this.fontsize + 'px';
         this.div.textContent = this.str;
@@ -1016,7 +1020,7 @@ export default class Sprite {
         this.setPos(this.xcoor, this.ycoor);
     }
 
-    startShaking () {
+    startShaking() {
         var p = this.div.parentNode;
         var shake = newHTML('div', 'shakeme', p);
         shake.id = 'shakediv';
@@ -1066,7 +1070,7 @@ export default class Sprite {
         this.div.owner = this;
     }
 
-    stopShaking () {
+    stopShaking() {
         if (this.div.id != 'shakediv') {
             return;
         }
@@ -1094,7 +1098,7 @@ export default class Sprite {
         }
     }
 
-    drawCloseButton () {
+    drawCloseButton() {
         var ctx = this.div.getContext('2d');
         var img = document.createElement('img');
         img.src = 'assets/ui/closeit.svg';
@@ -1111,7 +1115,7 @@ export default class Sprite {
     // Save data
     /////////////////////////////////////////
 
-    getData () {
+    getData() {
         var data = (this.type == 'sprite') ? this.getSpriteData() : this.getTextBoxData();
         if (this.type != 'sprite') {
             return data;
@@ -1126,7 +1130,7 @@ export default class Sprite {
         return data;
     }
 
-    getSpriteData () {
+    getSpriteData() {
         var data = {};
         data.shown = this.shown;
         data.type = this.type;
@@ -1153,7 +1157,7 @@ export default class Sprite {
         return data;
     }
 
-    getTextBoxData () {
+    getTextBoxData() {
         var data = {};
         data.shown = this.shown;
         data.type = this.type;
@@ -1172,4 +1176,5 @@ export default class Sprite {
         data.fontsize = this.fontsize;
         return data;
     }
+
 }

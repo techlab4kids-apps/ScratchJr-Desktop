@@ -1,5 +1,3 @@
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:890765074.
-
 import ScratchJr from '../ScratchJr';
 import Project from './Project';
 import Thumbs from './Thumbs';
@@ -9,123 +7,130 @@ import Events from '../../utils/Events';
 import Scroll from './Scroll';
 import Menu from '../blocks/Menu';
 import ScratchAudio from '../../utils/ScratchAudio';
-import {gn, localx, localy, newHTML, isTablet,
-    globalx, globaly, setCanvasSize, getDocumentHeight, frame} from '../../utils/lib';
+import {
+    gn, localx, localy, newHTML, isTablet,
+    globalx, globaly, setCanvasSize, getDocumentHeight, frame
+} from '../../utils/lib';
 
 let scroll = undefined;
 let watermark;
 
 export default class ScriptsPane {
-    static get scroll () {
+    static get scroll() {
         return scroll;
     }
 
-    static get watermark () {
+    static get watermark() {
         return watermark;
     }
 
-    static createScripts (parent) {
-        var div = newHTML('div', 'scripts', parent);
+    static createScripts(parent) {
+        const div = newHTML('div', 'scripts', parent);
         div.setAttribute('id', 'scripts');
         watermark = newHTML('div', 'watermark', div);
-        var h = Math.max(getDocumentHeight(), frame.offsetHeight);
+        const h = Math.max(getDocumentHeight(), frame.offsetHeight);
         setCanvasSize(div, div.offsetWidth, h - div.offsetTop);
         scroll = new Scroll(div, 'scriptscontainer', div.offsetWidth,
             h - div.offsetTop, ScratchJr.getActiveScript, ScratchJr.getBlocks);
     }
 
-    static setActiveScript (sprname) {
-        var currentsc = gn(sprname + '_scripts');
+    static setActiveScript(sprname) {
+        const currentsc = gn(`${sprname}_scripts`);
         if (!currentsc) {
             // Sprite not found
             return;
         }
         ScratchJr.stage.currentPage.setCurrentSprite(gn(sprname).owner);
         currentsc.owner.activate();
-        currentsc.parentNode.onmousedown = function (evt) {
-            currentsc.owner.scriptsMouseDown(evt);
-        };
+        currentsc.parentNode.onmousedown = (evt) => currentsc.owner.scriptsMouseDown(evt);
+        currentsc.parentNode.ontouchstart = (evt) => currentsc.owner.scriptsMouseDown(evt);
         scroll.update();
     }
 
-    static runBlock (e, div) {
+    static prepareToDrag(e) {
         e.preventDefault();
-        e.stopPropagation();
-        var b = div.owner.findFirst();
-        //	if (b.aStart) b = b.next;
-        if (!b) {
-            return;
-        }
-        ScratchJr.runtime.addRunScript(ScratchJr.getSprite(), b);
-        ScratchJr.startCurrentPageStrips(['ontouch']);
-        ScratchJr.userStart = true;
-    }
-
-    static prepareToDrag (e) {
-        e.preventDefault();
-        var pt = Events.getTargetPoint(e);
+        const pt = ScriptsPane.getEventPoint(e);
         ScriptsPane.pickBlock(pt.x, pt.y, e);
     }
 
-    static pickBlock (x, y, e) {
+    static pickBlock(x, y, e) {
         if (!ScratchJr.runtime.inactive()) {
             ScratchJr.stopStrips();
         }
         ScriptsPane.cleanCarets();
         ScratchJr.unfocus(e);
-        var sc = ScratchJr.getActiveScript().owner;
+
+        const sc = ScratchJr.getActiveScript().owner;
         sc.dragList = sc.findGroup(Events.dragthumbnail.owner);
         sc.flowCaret = null;
-        var sy = Events.dragthumbnail.parentNode.scrollTop;
-        var sx = Events.dragthumbnail.parentNode.scrollLeft;
+
+        const sy = Events.dragthumbnail.parentNode.scrollTop;
+        const sx = Events.dragthumbnail.parentNode.scrollLeft;
+
         Events.dragmousex = x;
         Events.dragmousey = y;
-        var lpt = {
+
+        const lpt = {
             x: localx(Events.dragthumbnail.parentNode, x),
             y: localy(Events.dragthumbnail.parentNode, y)
         };
-        var mx = Events.dragmousex - globalx(Events.dragDiv) - lpt.x + Events.dragthumbnail.left;
-        var my = Events.dragmousey - globaly(Events.dragDiv) - lpt.y + Events.dragthumbnail.top;
-        var mtx = new WebKitCSSMatrix(window.getComputedStyle(Events.dragthumbnail).webkitTransform);
+
+        let mx = Events.dragmousex - globalx(Events.dragDiv) - lpt.x + Events.dragthumbnail.left;
+        let my = Events.dragmousey - globaly(Events.dragDiv) - lpt.y + Events.dragthumbnail.top;
+
+        const mtx = new WebKitCSSMatrix(window.getComputedStyle(Events.dragthumbnail).webkitTransform);
         my -= sy;
         mx -= sx;
+
         Events.dragcanvas = Events.dragthumbnail;
         Events.dragcanvas.origin = 'scripts';
         Events.dragcanvas.startx = mtx.m41;
         Events.dragcanvas.starty = mtx.m42;
+
         if (!Events.dragcanvas.isReporter && Events.dragcanvas.parentNode) {
             Events.dragcanvas.parentNode.removeChild(Events.dragcanvas);
         }
+
         Events.move3D(Events.dragcanvas, mx, my);
         Events.dragcanvas.style.zIndex = ScratchJr.dragginLayer;
         Events.dragDiv.appendChild(Events.dragcanvas);
-        var b = Events.dragcanvas.owner;
+
+        const b = Events.dragcanvas.owner;
         b.detachBlock();
-        //	b.lift();
+
         if (Events.dragcanvas.isReporter) {
             return;
         }
+
         ScratchJr.getActiveScript().owner.prepareCaret(b);
-        for (var i = 1; i < sc.dragList.length; i++) {
-            b = sc.dragList[i];
-            var pos = new WebKitCSSMatrix(window.getComputedStyle(b.div).webkitTransform);
-            var dx = pos.m41 - mtx.m41;
-            var dy = pos.m42 - mtx.m42;
-            b.moveBlock(dx, dy);
-            //   b.lift();
-            Events.dragcanvas.appendChild(b.div);
+
+        for (let i = 1; i < sc.dragList.length; i++) {
+            const block = sc.dragList[i];
+            const pos = new WebKitCSSMatrix(window.getComputedStyle(block.div).webkitTransform);
+            const dx = pos.m41 - mtx.m41;
+            const dy = pos.m42 - mtx.m42;
+
+            block.moveBlock(dx, dy);
+            Events.dragcanvas.appendChild(block.div);
         }
     }
 
-    ////////////////////////////////////////////////
-    //  Events MouseMove
-    ////////////////////////////////////////////////
+    static getEventPoint(e) {
+        if (e.touches && e.touches.length > 0) {
+            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
+    }
 
-    static draggingBlock (e) {
+    static draggingBlock(e) {
         e.preventDefault();
-        var pt = Events.getTargetPoint(e);
-        var dx = pt.x - Events.dragmousex;
-        var dy = pt.y - Events.dragmousey;
+        const pt = ScriptsPane.getEventPoint(e);
+        const dx = pt.x - Events.dragmousex;
+        const dy = pt.y - Events.dragmousey;
+
         Events.move3D(Events.dragcanvas, dx, dy);
         ScriptsPane.blockFeedback(Events.dragcanvas.left, Events.dragcanvas.top, e);
     }
@@ -252,38 +257,39 @@ export default class ScriptsPane {
         if (Menu.openMenu) {
             return;
         }
-        if (isTablet && e.touches && (e.touches.length > 1)) {
+        if (isTablet && e.touches && e.touches.length > 1) {
             return;
         }
         e.preventDefault();
         e.stopPropagation();
-        var sc = ScratchJr.getActiveScript();
+
+        const sc = ScratchJr.getActiveScript();
         sc.top = sc.offsetTop;
         sc.left = sc.offsetLeft;
-        var pt = Events.getTargetPoint(e);
+
+        const pt = ScriptsPane.getEventPoint(e);
         Events.dragmousex = pt.x;
         Events.dragmousey = pt.y;
         Events.dragged = false;
+
         ScriptsPane.setDragBackgroundEvents(ScriptsPane.dragMove, ScriptsPane.dragEnd);
     }
 
-    static setDragBackgroundEvents (fcnmove, fcnup) {
-        window.ontouchmove = function (evt) {
-                fcnmove(evt);
-            };
-        window.ontouchend = function (evt) {
-                fcnup(evt);
-            };
+    static setDragBackgroundEvents(fcnmove, fcnup) {
+        window.ontouchmove = (evt) => fcnmove(evt);
+        window.ontouchend = (evt) => fcnup(evt);
+        window.onmousemove = (evt) => fcnmove(evt);
+        window.onmouseup = (evt) => fcnup(evt);
     }
 
-    static dragMove (e) {
-        var pt = Events.getTargetPoint(e);
-        if (!Events.dragged && (Events.distance(Events.dragmousex - pt.x, Events.dragmousey - pt.y) < 5)) {
+    static dragMove(e) {
+        const pt = ScriptsPane.getEventPoint(e);
+        if (!Events.dragged && Events.distance(Events.dragmousex - pt.x, Events.dragmousey - pt.y) < 5) {
             return;
         }
         Events.dragged = true;
-        var dx = pt.x - Events.dragmousex;
-        var dy = pt.y - Events.dragmousey;
+        const dx = pt.x - Events.dragmousex;
+        const dy = pt.y - Events.dragmousey;
         Events.dragmousex = pt.x;
         Events.dragmousey = pt.y;
         Events.move3D(ScratchJr.getActiveScript(), dx, dy);
@@ -291,7 +297,7 @@ export default class ScriptsPane {
         e.preventDefault();
     }
 
-    static dragEnd (e) {
+    static dragEnd(e) {
         Events.dragged = false;
         e.preventDefault();
         Events.clearEvents();
