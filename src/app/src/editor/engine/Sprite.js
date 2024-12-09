@@ -42,6 +42,7 @@ import {
 export default class Sprite {
 
     constructor(attr, whenDone) {
+        this.initialScale = attr.scale || 1;
         if (attr.type == 'sprite') {
             this.createSprite(attr.page, attr.md5, attr.id, attr, whenDone);
         } else {
@@ -51,6 +52,11 @@ export default class Sprite {
     }
 
     initDragAndDrop() {
+        // Store initial scale when sprite is created
+        if (!this.initialScale) {
+            this.initialScale = this.scale || 1;
+        }
+
         this.div.addEventListener('mousedown', this.onDragStart.bind(this));
         this.div.addEventListener('touchstart', this.onDragStart.bind(this), {passive: false});
         document.addEventListener('mousemove', this.onDragMove.bind(this));
@@ -68,19 +74,45 @@ export default class Sprite {
         this.startY = point.clientY;
         this.initialX = this.xcoor;
         this.initialY = this.ycoor;
+        // Store initial scale
+        this.dragStartScale = this.scale;
+        // Store initial dimensions
+        this.dragStartWidth = this.w;
+        this.dragStartHeight = this.h;
     }
 
     onDragMove(event) {
         if (!this.dragging) return;
+        event.preventDefault();
         const isTouch = event.type === 'touchmove';
         const point = isTouch ? event.touches[0] : event;
         const deltaX = point.clientX - this.startX;
         const deltaY = point.clientY - this.startY;
+
+        // Update position while maintaining scale
         this.setPos(this.initialX + deltaX, this.initialY + deltaY);
+
+        // Ensure scale hasn't changed
+        if (this.scale !== this.dragStartScale) {
+            this.scale = this.dragStartScale;
+        }
+
+        // Force render with correct scale
+        this.render();
     }
 
     onDragEnd() {
         this.dragging = false;
+    }
+
+    resetToInitialState() {
+        // Reset to initial scale when green flag is pressed
+        if (this.initialScale) {
+            this.setScaleTo(this.initialScale);
+        } else {
+            // If no initial scale is set, use default or 1
+            this.setScaleTo(this.defaultScale || 1);
+        }
     }
 
     createSprite(page, md5, id, attr, fcn) {
@@ -397,12 +429,11 @@ export default class Sprite {
     }
 
     setPos(dx, dy) {
+        const currentScale = this.scale; // Store current scale
         this.xcoor = dx;
         this.ycoor = dy;
+        this.scale = currentScale; // Ensure scale is maintained
         this.render();
-        setProps(this.div.style, {
-            transform: `translate3d(${this.xcoor - this.cx * this.scale}px, ${this.ycoor - this.cy * this.scale}px, 0px)`
-        });
     }
 
     wrap() {
@@ -447,15 +478,23 @@ export default class Sprite {
 
     render() {
         if (this.img) {
-            var mtx = `translate3d(${this.xcoor - this.cx * this.scale}px, ${this.ycoor - this.cy * this.scale}px, 0px)`;
-            if (this.flip) {
-                mtx += ` scale(-${this.scale}, ${this.scale})`;
-            } else {
-                mtx += ` scale(${this.scale}, ${this.scale})`;
-            }
-            this.div.style.transform = mtx;
-            this.div.style.width = `${this.w * this.scale}px`;
-            this.div.style.height = `${this.h * this.scale}px`;
+            // Store the current transform state
+            const translateX = this.xcoor - this.cx * this.scale;
+            const translateY = this.ycoor - this.cy * this.scale;
+
+            // Separate transforms for better control
+            let transforms = [
+                `translate3d(${translateX}px, ${translateY}px, 0px)`,
+                `rotate(${this.angle || 0}deg)`,
+                this.flip ? `scale(-${this.scale}, ${this.scale})` : `scale(${this.scale}, ${this.scale})`
+            ];
+
+            // Apply transforms in correct order
+            this.div.style.transform = transforms.join(' ');
+
+            // Set dimensions
+            this.div.style.width = `${this.w}px`;
+            this.div.style.height = `${this.h}px`;
         }
     }
 
@@ -518,7 +557,9 @@ export default class Sprite {
     }
 
     setScaleTo(n) {
-        // n is the desired scale
+        // Don't change scale during drag operations
+        if (this.dragging) return;
+
         const clamped = this.getScale(n);
         if (clamped !== this.scale) {
             this.scale = clamped;
