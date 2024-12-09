@@ -102,7 +102,12 @@ export default class Sprite {
     }
 
     onDragEnd() {
-        this.dragging = false;
+        if (this.dragging) {
+            // Update home position to match current position
+            this.homex = this.xcoor;
+            this.homey = this.ycoor;
+            this.dragging = false;
+        }
     }
 
     resetToInitialState() {
