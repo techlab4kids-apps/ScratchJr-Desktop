@@ -50,7 +50,7 @@ const DEBUG_RESOURCEIO = DEBUG && false;
 const DEBUG_CLEANASSETS = DEBUG && false;
 const DEBUG_NYI = DEBUG && true;
 // const DEBUG_LOAD_DEVTOOLS = DEBUG && true;
-const DEBUG_LOAD_DEVTOOLS = true;
+const DEBUG_LOAD_DEVTOOLS = false;
 
 
 // Debugging the electron process:
@@ -88,25 +88,32 @@ let dataStore;
 function createWindow() {
     // Create the browser window.
 
-    win = new BrowserWindow(
-        {
-            fullscreen: false,
-            width: 1350,
-            height: 750,
-            minHeight: 750,
-            minWidth: 1000,
-            center: true,
-            customVar: 'elephants',
-            isDebug: DEBUG
-        });
+    win = new BrowserWindow({
+        fullscreen: true,
+        width: 1350,
+        height: 750,
+        minHeight: 750,
+        minWidth: 1000,
+        resizable: true,
+        maximizable: true,
+        center: true,
+        customVar: 'elephants',
+        isDebug: DEBUG
+    });
 
     const view = new BrowserView({
         title: 'Scratch Jr',
-        icon: `${__dirname}app/assets/icon/icon.png`,
+        icon: `${__dirname}/app/assets/icon/icon.png`,
         webPreferences: {
             nodeIntegration: false
         },
     });
+
+    // Automatically resize the view to fill the window's content area
+    view.setAutoResize({ width: true, height: true });
+    dataStore = new ScratchJRDataStore(win);
+    win.setBrowserView(view);
+
 
     dataStore = new ScratchJRDataStore(win);
     win.setBrowserView(view);
@@ -139,6 +146,24 @@ function createWindow() {
         win = null;
     });
 
+    // Update BrowserView on resize
+    win.on('resize', () => {
+        const { width, height } = win.getContentBounds();
+        view.setBounds({ x: 0, y: 0, width, height });
+    });
+
+// If you want special handling on maximize (optional):
+    win.on('maximize', () => {
+        const { width, height } = win.getContentBounds();
+        view.setBounds({ x: 0, y: 0, width, height });
+    });
+
+// If you handle unmaximize too:
+    win.on('unmaximize', () => {
+        const { width, height } = win.getContentBounds();
+        view.setBounds({ x: 0, y: 0, width, height });
+    });
+
     win.webContents.on('did-finish-load', () => {
     });
 }
@@ -154,30 +179,52 @@ app.on('ready', () => {
 
         createWindow();
 
-        let template;
-        if (dataStore.hasRestoreDatabase()) {
-            template = [
+        let fileSubmenu = [];
+
+        // Check if there's a restore database option
+        if (dataStore && dataStore.hasRestoreDatabase()) {
+            fileSubmenu.push(
                 {
-                    label: 'File',
-                    submenu: [
-                        {label: 'Restore projects', click: dataStore.restoreProjects.bind(dataStore)},
-                        {type: 'separator'},
-                        {role: 'quit'},
-                    ],
-                }];
-        } else {
-            template = [
-                {
-                    label: 'File',
-                    submenu: [
-                        {role: 'quit'},
-                    ],
-                }];
+                    label: 'Restore projects',
+                    click: dataStore.restoreProjects.bind(dataStore)
+                },
+                {type: 'separator'}
+            );
         }
 
+        // Add the new toggle fullscreen and toggle devtools menu items
+        fileSubmenu = fileSubmenu.concat([
+            {
+                label: 'Toggle Full Screen',
+                accelerator: process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11',
+                click: () => {
+                    const isFullScreen = win.isFullScreen();
+                    win.setFullScreen(!isFullScreen);
+                }
+            },
+            {
+                label: 'Toggle Dev Tools',
+                accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                click: () => {
+                    if (win.webContents.isDevToolsOpened()) {
+                        win.webContents.closeDevTools();
+                    } else {
+                        win.webContents.openDevTools();
+                    }
+                }
+            },
+            {type: 'separator'},
+            {role: 'quit'}
+        ]);
+
+        const template = [
+            {
+                label: 'File',
+                submenu: fileSubmenu
+            }
+        ];
 
         const menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
 
     }, 1000); // Time till execution, in milliseconds.
 
