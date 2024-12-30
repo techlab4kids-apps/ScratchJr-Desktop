@@ -99,14 +99,17 @@ export default class Events {
         dragDiv = document.createElement('div');
         dragDiv.id = 'dragDiv';
         dragDiv.style.position = 'absolute';
-        dragDiv.style.width = '0px'; // size doesn't matter since children float
+        dragDiv.style.width = '0px';
         dragDiv.style.height = '0px';
-        dragDiv.style.zIndex = 7001; // slightly higher than ScratchJr.dragginLayer
+        dragDiv.style.zIndex = 7001;
         var frameDiv = gn('frame');
         frameDiv.appendChild(dragDiv);
     }
     static startDrag (e, c, atstart, atend, atdrag, atclick, athold) {
+        console.log("Starting drag & drop");
+
         dragged = false;
+
         var pt = Events.getTargetPoint(e);
         dragmousex = pt.x;
         dragmousey = pt.y;
@@ -114,29 +117,22 @@ export default class Events {
         fcnstart = atstart;
         fcnend = atend;
         fcnclick = atclick;
+        updatefcn = atdrag;
 
         if (athold) {
             Events.holdit(c, athold);
         }
-        updatefcn = atdrag;
-        if (isTablet) { // startDrag event setting
+
+        if (isTablet) {
             delta = 20 * scaleMultiplier;
-            window.ontouchmove = function (evt) {
-                Events.touchMove(evt);
-            };
-            window.ontouchend = function (evt) {
-                Events.touchEnd(evt);
-            };
-            window.ontouchleave = window.ontouchend;
-            window.ontouchcancel = window.ontouchend;
+            window.addEventListener('touchmove', Events.touchMove, {passive: false});
+            window.addEventListener('touchend', Events.touchEnd);
+            window.addEventListener('touchcancel', Events.touchEnd);
+
         } else {
             delta = 10;
-            window.onmousemove = function (evt) {
-                Events.mouseMove(evt);
-            };
-            window.onmouseup = function (evt) {
-                Events.mouseUp(evt);
-            };
+            window.addEventListener('mousemove', Events.mouseMove);
+            window.addEventListener('mouseup', Events.mouseUp);
         }
     }
 
@@ -146,10 +142,11 @@ export default class Events {
             fcn(dragthumbnail);
             Events.clearDragAndDrop();
         };
-        timeoutEvent = setTimeout(repeat, 500);
+        timeoutEvent = setTimeout(repeat, 3000);
     }
 
     static clearDragAndDrop () {
+        console.log("Clearing drag & drop");
         timeoutEvent = undefined;
         dragcanvas = undefined;
         dragged = false;
@@ -160,33 +157,36 @@ export default class Events {
         fcnclick = undefined;
     }
 
-    static touchMove (e) {
+    static touchMove(e) {
         if (e.touches.length > 1) {
             return;
         }
+        e.preventDefault();
         Events.mouseMove(e);
     }
 
-    static touchEnd (e) {
+    static touchEnd(e) {
         if (e.touches.length > 1) {
             return;
         }
-        if (updatefcn) {
-            updatefcn(e, dragcanvas); // update to final position
-        }
+        e.preventDefault();
+        // if (updatefcn) {
+        //     updatefcn(e, dragcanvas);
+        // }
         Events.mouseUp(e);
     }
+
     static mouseMove (e) {
-        // be forgiving about the click
         var pt = Events.getTargetPoint(e);
-        if (!dragged && (Events.distance(dragmousex - pt.x, dragmousey - pt.y) < delta)) {
+        let distance = Events.distance(dragmousex - pt.x, dragmousey - pt.y);
+        if (!dragged && (distance < delta)) {
             return;
         }
         if (timeoutEvent) {
             clearTimeout(timeoutEvent);
         }
         timeoutEvent = undefined;
-        if (!dragged) {
+        if (!dragged && fcnstart) {
             fcnstart(e);
         }
         dragged = true;
@@ -208,6 +208,7 @@ export default class Events {
         timeoutEvent = undefined;
         Events.clearEvents();
         if (!dragged) {
+            dragged = false;
             Events.itIsAClick(e);
         } else {
             Events.performMouseUpAction(e);
@@ -271,14 +272,14 @@ export default class Events {
     /*
     .m41 – corresponds to the ‘x’ value of a WebKitCSSMatrix
     .m42 – corresponds to the ‘y’ value of a WebKitCSSMatrix
-    
-    
-    The clientX read-only property of the MouseEvent interface provides the horizontal 
-    coordinate within the application's client area at which the event occurred 
-    (as opposed to the coordinates within the page). 
-    
-    For example, clicking in the top-left corner of the client area will always 
-    result in a mouse event with a clientX value of 0, regardless of whether the 
+
+
+    The clientX read-only property of the MouseEvent interface provides the horizontal
+    coordinate within the application's client area at which the event occurred
+    (as opposed to the coordinates within the page).
+
+    For example, clicking in the top-left corner of the client area will always
+    result in a mouse event with a clientX value of 0, regardless of whether the
     page is scrolled horizontally.
     */
 

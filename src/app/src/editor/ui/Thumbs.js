@@ -16,13 +16,32 @@ import {frame, gn, localx, newHTML, scaleMultiplier, getIdFor,
 let caret = undefined;
 
 export default class Thumbs {
+
+    static addEventListeners(element, eventName, handler) {
+        if (isTablet) {
+            // Only add needed events based on eventName
+            switch(eventName) {
+                case 'mousedown':
+                    element.addEventListener('touchstart', handler, {passive: false});
+                    break;
+                case 'mouseup':
+                    element.addEventListener('touchend', handler, {passive: false});
+                    break;
+                case 'mousemove':
+                    element.addEventListener('touchmove', handler, {passive: false});
+                    break;
+            }
+        }
+        element.addEventListener(eventName, handler);
+    }
+
     static updatePages () {
         var pthumbs = gn('pagecc');
         while (pthumbs.childElementCount > 0) {
             pthumbs.removeChild(pthumbs.childNodes[0]);
         }
         var prev = undefined;
-        
+
         let th;
         for (var i = 0; i < ScratchJr.stage.pages.length; i++) {
             var page = ScratchJr.stage.pages[i];
@@ -67,38 +86,40 @@ export default class Thumbs {
         return null;
     }
 
-    static pageMouseDown (e) {
+    static pageMouseDown(e) {
+        e.preventDefault();
         if (isTablet && e.touches && (e.touches.length > 1)) {
             return;
         }
         if (ScratchJr.onHold) {
             return;
         }
-        e.preventDefault();
+
         e.stopPropagation();
-        if (window.event) {
-            Thumbs.t = window.event.srcElement;
-        } else {
-            Thumbs.t = e.target;
-        }
-        var tb = Thumbs.getType(Thumbs.t, 'pagethumb');
-        if (ScratchJr.shaking && (e.target.className == 'deletethumb')) {
+
+        let target = e.target || window.event.srcElement;
+        var tb = Thumbs.getType(target, 'pagethumb');
+
+        if (ScratchJr.shaking && (target.className == 'deletethumb')) {
             ScratchJr.clearSelection();
             ScratchJr.stage.deletePage(tb.owner);
             return;
         }
+
         if (ScratchJr.shaking) {
             ScratchJr.clearSelection();
             return;
         }
+
         if (!tb) {
             return;
         }
+
         if (!ScratchJr.isEditable() || (gn('pagecc').childElementCount < 3)) {
             Thumbs.clickOnPage(e, tb.owner);
         } else {
-            Events.startDrag(e, tb, Thumbs.prepareToDragPage, Thumbs.dropPage, Thumbs.draggingPage,
-                Thumbs.clickPage, Thumbs.startPageShaking);
+            Events.startDrag(e, tb, Thumbs.prepareToDragPage, Thumbs.dropPage,
+                Thumbs.draggingPage, Thumbs.clickPage, Thumbs.startPageShaking);
         }
     }
 
@@ -353,15 +374,10 @@ export default class Thumbs {
         }
         img.setAttribute('class', 'unselectable');
         tb.setAttribute('id', 'emptypage');
-        if (isTablet) {
-            tb.onmousedown = function (evt) {
-                Thumbs.clickOnEmptyPage(evt);
-            };
-        } else {
-            tb.onmousedown = function (evt) {
-                Thumbs.clickOnEmptyPage(evt);
-            };
-        }
+        Thumbs.addEventListeners(tb, 'mousedown', function(evt) {
+            evt.preventDefault();
+            Thumbs.clickOnEmptyPage(evt);
+        });
         return tb;
     }
 
@@ -447,15 +463,26 @@ export default class Thumbs {
     //  Sprite Thumbnails
     ////////////////////////////////////////////
 
-    static startDragThumb (e, tb) {
+    static startDragThumb(e, tb) {
+        e.preventDefault();
+
+        if (isTablet && e.touches && (e.touches.length > 1)) {
+            return;
+        }
+
         if (ScratchJr.shaking && (e.target.id == 'deletespritethumb')) {
             ScratchJr.clearSelection();
             ScratchJr.stage.removeSprite(gn(tb.owner).owner);
+            return;
         }
+
         if (ScratchJr.shaking) {
             ScratchJr.clearSelection();
+            return;
         }
-        if (!ScratchJr.isEditable()) {
+
+        const isEditable = ScratchJr.isEditable();
+        if (!isEditable) {
             Thumbs.clickOnSprite(e, tb);
         } else {
             Events.startDrag(e, tb, Thumbs.prepareToDrag, Thumbs.drop,
@@ -552,30 +579,38 @@ export default class Thumbs {
         frame.appendChild(Events.dragcanvas);
     }
 
-    static dragging (e, el) {
+    static dragging(e, el) {
         e.preventDefault();
         var pt = Events.getTargetPoint(e);
         var dx = pt.x - Events.dragmousex;
         var dy = pt.y - Events.dragmousey;
         Events.move3D(el, dx * window.devicePixelRatio, dy * window.devicePixelRatio);
-        if (Palette.getLandingPlace(el, e, window.devicePixelRatio) != 'pages') {
+
+        var landingPlace = Palette.getLandingPlace(el, e, window.devicePixelRatio);
+        if (landingPlace != 'pages') {
             Thumbs.removePagesCaret();
             return;
         }
+
         var thumb = Palette.getHittedThumb(el, gn('pagecc'), window.devicePixelRatio);
         if (thumb && !thumb.owner) {
             thumb = undefined;
         }
+
         if (thumb) {
             Thumbs.overpage(thumb);
         }
+
+        Thumbs.updatePageHighlights(thumb);
+    }
+
+    static updatePageHighlights(selectedThumb) {
         for (var i = 0; i < gn('pagecc').childElementCount; i++) {
             var spr = gn('pagecc').childNodes[i];
-            if (!spr.owner) {
-                continue;
-            }
+            if (!spr.owner) continue;
+
             var page = gn(spr.owner);
-            if (thumb && (thumb.id != spr.id)) {
+            if (selectedThumb && (selectedThumb.id != spr.id)) {
                 if (page.owner.id == ScratchJr.stage.currentPage.id) {
                     Thumbs.highlighPage(spr);
                 } else {
@@ -618,15 +653,14 @@ export default class Thumbs {
         Events.dragcanvas = undefined;
     }
 
-    static click (e, el) {
+    static click(e, el) {
         e.preventDefault();
         e.stopPropagation();
-        if (window.event) {
-            Thumbs.t = window.event.srcElement;
-        } else {
-            Thumbs.t = e.target;
-        }
-        el.setAttribute('class', ScratchJr.isEditable() ? 'spritethumb on' : 'spritethumb noneditable');
+
+        let target = e.target || window.event.srcElement;
+        el.setAttribute('class', ScratchJr.isEditable() ?
+            'spritethumb on' : 'spritethumb noneditable');
+
         Thumbs.clickOnSprite(e, el);
     }
 

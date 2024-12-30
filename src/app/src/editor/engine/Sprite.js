@@ -30,6 +30,7 @@ import {newHTML, newDiv, newP, gn,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
     globaly, globalx, rgbToHex} from '../../utils/lib';
 
+
 export default class Sprite {
     constructor (attr, whenDone) {
         if (attr.type == 'sprite') {
@@ -733,6 +734,16 @@ export default class Sprite {
                 whenDone(this);
             }
         }
+
+        if (isTablet) {
+            this.div.addEventListener('touchstart', (evt) => {
+                evt.preventDefault();
+                this.clickOnText(evt);
+            }, {passive: false});
+        }
+        this.div.addEventListener('mousedown', (evt) => {
+            this.clickOnText(evt);
+        });
     }
 
     setTextBox () {
@@ -876,47 +887,53 @@ export default class Sprite {
         this.recalculateText();
     }
 
-    clickOnText (e) {
+    clickOnText(e) {
+        e.preventDefault();
         e.stopPropagation();
+
         this.setTextBox();
         gn('textbox').style.visibility = 'visible';
         this.div.style.visibility = 'hidden';
         this.activateInput();
     }
 
+
     activateInput () {
         this.oldvalue = this.str;
         var ti = document.forms.activetextbox.typing;
         gn('textbox').style.visibility = 'visible';
+
         var me = this;
-        ti.onblur = function () {
+
+        // Handle blur
+        ti.addEventListener('blur', () => {
             me.unfocusText();
-        };
-        ti.onkeypress = function (evt) {
+        });
+
+        // Handle key events
+        ti.addEventListener('keypress', (evt) => {
             me.handleWrite(evt);
-        };
-        ti.onkeyup = function (evt) {
+        });
+
+        ti.addEventListener('keyup', (evt) => {
             me.handleKeyUp(evt);
-        };
-        ti.onsubmit = function () {
-            me.unfocusText();
-        };
+        });
+
+        // Focus handling for different devices
         if (isAndroid) {
-            setTimeout(function () {
+            setTimeout(() => {
                 ti.focus();
             }, 500);
 
-            ScratchJr.onBackButtonCallback.push(function () {
+            ScratchJr.onBackButtonCallback.push(() => {
                 me.unfocusText();
             });
+        } else if (isTablet) {
+            ti.focus();
         } else {
-            if (isTablet) {
+            setTimeout(() => {
                 ti.focus();
-            } else {
-                setTimeout(function () {
-                    ti.focus();
-                }, 100);
-            }
+            }, 100);
         }
     }
 
@@ -1022,24 +1039,25 @@ export default class Sprite {
         shake.id = 'shakediv';
 
         // TODO: merge these for iOS
-        if (isAndroid) {
-            setProps(shake.style, {
-                position: 'absolute',
-                left: this.screenLeft() + 'px',
-                top: this.screenTop() + 'px',
-                width: (this.w * this.scale) + 'px',
-                height: (this.h * this.scale) + 'px'
-            });
-        } else {
-            setProps(shake.style, {
-                position: 'absolute',
-                left: (this.screenLeft() / this.scale) + 'px',
-                top: (this.screenTop() / this.scale) + 'px',
-                width: this.w + 'px',
-                height: this.h + 'px',
-                zoom: Math.floor(this.scale * 100) + '%'
-            });
-        }
+        // if (isAndroid) {
+        setProps(shake.style, {
+            position: 'absolute',
+            left: this.screenLeft() + 'px',
+            top: this.screenTop() + 'px',
+            width: (this.w * this.scale) + 'px',
+            height: (this.h * this.scale) + 'px'
+        });
+        // } else {
+        // setProps(shake.style, {
+        //         position: 'absolute',
+        //         left: (this.screenLeft() / this.scale) + 'px',
+        //         top: (this.screenTop() / this.scale) + 'px',
+        //         width: this.w + 'px',
+        //         height: this.h + 'px',
+        //         zoom: Math.floor(this.scale * 100) + '%'
+        //     }
+        // );
+        // }
         var mtx = 'translate3d(0px, 0px, 0px)';
         if (this.img) {
             mtx += ' rotate(' + this.angle + 'deg)';
@@ -1051,19 +1069,43 @@ export default class Sprite {
         }
         this.setTransform(mtx);
         shake.appendChild(this.div);
-        var cb = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
+
+        const deleteButton = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
+
+        if (isTablet) {
+            deleteButton.addEventListener('touchstart', (evt) => {
+                evt.preventDefault();
+                this.deleteSprite();
+            }, {passive: false});
+        }
+        deleteButton.addEventListener('mousedown', (evt) => {
+            this.deleteSprite();
+        });
+
+        // var deleteButton = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
         if (isiOS && this.type == 'sprite') {
-            cb.style.zoom = Math.floor((1 / this.scale) * 100) + '%';
+            // deleteButton.style.zoom = Math.floor((1 / this.scale) * 100) + '%';
+            deleteButton.style.zoom = '100%';
         }
-        if ((globalx(cb) - globalx(ScratchJr.stage.div)) < 0) {
-            cb.style.left = Math.abs(globalx(cb) - globalx(ScratchJr.stage.div)) * this.scale + 'px';
+        if ((globalx(deleteButton) - globalx(ScratchJr.stage.div)) < 0) {
+            deleteButton.style.left = Math.abs(globalx(deleteButton) - globalx(ScratchJr.stage.div)) * this.scale + 'px';
         }
-        if ((globaly(cb) - globaly(ScratchJr.stage.div)) < 0) {
-            cb.style.top = Math.abs(globaly(cb) - globaly(ScratchJr.stage.div)) * this.scale + 'px';
+        if ((globaly(deleteButton) - globaly(ScratchJr.stage.div)) < 0) {
+            deleteButton.style.top = Math.abs(globaly(deleteButton) - globaly(ScratchJr.stage.div)) * this.scale + 'px';
         }
-        cb.id = 'deletesprite';
+        deleteButton.id = 'deletesprite';
         this.div = shake;
         this.div.owner = this;
+    }
+
+    deleteSprite() {
+        // Move deletion logic here
+        if (this.div.id == 'shakediv') {
+            var p = this.div;
+            this.div = this.div.childNodes[0];
+            ScratchJr.stage.currentPage.div.appendChild(this.div);
+            p.parentNode.removeChild(p);
+        }
     }
 
     stopShaking () {

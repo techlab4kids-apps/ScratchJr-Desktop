@@ -682,21 +682,21 @@ export default class ScratchJr {
         ScratchJr.keyboardAddKey(pad, '0', 'onekey');
         ScratchJr.keyboardAddKey(pad, undefined, 'onekey delete');
     //  var keym = newHTML("div", 'onkey' ,pad);
-   
-       
+
+
         // special request bugfix - handle keyboard input in the number window.
     	document.addEventListener('keydown', ScratchJr.onNumberKeyDown);
-    	 	
+
         // If using a touch screen, this prevents drag & drop to fail
         keypad.addEventListener('touchmove', function (event) {
             event.preventDefault();
         });
     }
-    
+
     static isNumberPadKeyCode (e) {
         return (isFinite(event.key) || e.keyCode == 8 /* delete */ || e.keyCode === 46 /* backspace */);
     }
-    	
+
     static onNumberKeyDown (e) {
     	if (ScratchJr.isNumberPadKeyCode(e) && document.getElementsByClassName('picokeyboard on').length > 0) {
     	    e.preventDefault();
@@ -711,7 +711,7 @@ export default class ScratchJr {
 					editfirst = false;
 					val = '0';
 				}
-				
+
 				if (val == '0') {
 					val = newChar;
 				} else {

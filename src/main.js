@@ -45,10 +45,10 @@ const {app, dialog, BrowserWindow, BrowserView, ipcMain, Menu} = require('electr
 
 const DEBUG = isDev;
 const DEBUG_DATABASE = DEBUG && false;
-const DEBUG_FILEIO = DEBUG && true;
+const DEBUG_FILEIO = DEBUG && false;
 const DEBUG_RESOURCEIO = DEBUG && false;
 const DEBUG_CLEANASSETS = DEBUG && false;
-const DEBUG_NYI = DEBUG && true;
+const DEBUG_NYI = DEBUG && false;
 // const DEBUG_LOAD_DEVTOOLS = DEBUG && true;
 const DEBUG_LOAD_DEVTOOLS = true;
 
@@ -88,21 +88,22 @@ let dataStore;
 function createWindow() {
     // Create the browser window.
 
-    win = new BrowserWindow(
-        {
-            fullscreen: false,
-            width: 1350,
-            height: 750,
-            minHeight: 750,
-            minWidth: 1000,
-            center: true,
-            customVar: 'elephants',
-            isDebug: DEBUG
-        });
+    win = new BrowserWindow({
+        fullscreen: false,
+        width: 1350,
+        height: 750,
+        // minHeight: 750,
+        // minWidth: 1000,
+        resizable: true,
+        maximizable: true,
+        // center: true,
+        customVar: 'elephants',
+        isDebug: DEBUG
+    });
 
     const view = new BrowserView({
         title: 'Scratch Jr',
-        icon: `${__dirname}app/assets/icon/icon.png`,
+        icon: `${__dirname}/app/assets/icon/icon.png`,
         webPreferences: {
             nodeIntegration: false
         },
@@ -110,7 +111,7 @@ function createWindow() {
 
     dataStore = new ScratchJRDataStore(win);
     win.setBrowserView(view);
-
+    win.maximize();
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -119,7 +120,6 @@ function createWindow() {
         slashes: true,
 
     }));
-    //win.loadFile(`${__dirname}/app/index.html`);
 
     if (DEBUG_LOAD_DEVTOOLS) {
         // Open the DevTools.
@@ -139,6 +139,56 @@ function createWindow() {
         win = null;
     });
 
+    function setNewBounds() {
+
+        const [width, height] = win.getContentSize(); // More accurate dimensions
+        view.setBounds({ x: 0, y: 0, width, height });
+    }
+
+// Update BrowserView on resize
+    win.on('resize', () => {
+        // const currentView = win.getBrowserView();
+        // win.setBrowserView(null);
+        // currentView.destroy();
+
+        win.setBrowserView(view);
+
+        setNewBounds();
+        view.webContents.focus();
+        // if (win.webContents.isDevToolsOpened()) {
+        //     win.webContents.closeDevTools();
+        //     win.webContents.openDevTools();
+        // }
+
+        // Force event propagation
+        const [width, height] = win.getContentSize();
+        view.webContents.sendInputEvent({
+            type: 'mouseMove',
+            x: width / 2,
+            y: height / 2
+        });
+
+        // Check and log view properties
+        // console.log('View bounds:', view.getBounds());
+        console.log('View webContents:', view.webContents);
+    });
+
+// If you want special handling on maximize (optional):
+    win.on('maximize', () => {
+        setNewBounds();
+    });
+
+// If you handle unmaximize too:
+    win.on('unmaximize', () => {
+        setNewBounds();
+    });
+
+    win.on('focus', () => console.log('Window focused'));
+    view.webContents.on('focus', () => console.log('BrowserView focused'));
+    view.webContents.on('before-input-event', (event, input) => {
+        console.log('Input event:', input);
+    });
+
     win.webContents.on('did-finish-load', () => {
     });
 }
@@ -154,30 +204,52 @@ app.on('ready', () => {
 
         createWindow();
 
-        let template;
-        if (dataStore.hasRestoreDatabase()) {
-            template = [
+        let fileSubmenu = [];
+
+        // Check if there's a restore database option
+        if (dataStore && dataStore.hasRestoreDatabase()) {
+            fileSubmenu.push(
                 {
-                    label: 'File',
-                    submenu: [
-                        {label: 'Restore projects', click: dataStore.restoreProjects.bind(dataStore)},
-                        {type: 'separator'},
-                        {role: 'quit'},
-                    ],
-                }];
-        } else {
-            template = [
-                {
-                    label: 'File',
-                    submenu: [
-                        {role: 'quit'},
-                    ],
-                }];
+                    label: 'Restore projects',
+                    click: dataStore.restoreProjects.bind(dataStore)
+                },
+                {type: 'separator'}
+            );
         }
 
+        // Add the new toggle fullscreen and toggle devtools menu items
+        fileSubmenu = fileSubmenu.concat([
+            {
+                label: 'Toggle Full Screen',
+                accelerator: process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11',
+                click: () => {
+                    const isFullScreen = win.isFullScreen();
+                    win.setFullScreen(!isFullScreen);
+                }
+            },
+            {
+                label: 'Toggle Dev Tools',
+                accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                click: () => {
+                    if (win.webContents.isDevToolsOpened()) {
+                        win.webContents.closeDevTools();
+                    } else {
+                        win.webContents.openDevTools();
+                    }
+                }
+            },
+            {type: 'separator'},
+            {role: 'quit'}
+        ]);
+
+        const template = [
+            {
+                label: 'File',
+                submenu: fileSubmenu
+            }
+        ];
 
         const menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
 
     }, 1000); // Time till execution, in milliseconds.
 
@@ -475,7 +547,9 @@ class ScratchJRDataStore {
      @param {object} data
      */
     getMD5(data) { // eslint-disable class-methods-use-this
-        return crypto.createHash('md5').update(data).digest('hex');
+        return crypto.createHash('md5')
+            .update(data)
+            .digest('hex');
     }
 
 

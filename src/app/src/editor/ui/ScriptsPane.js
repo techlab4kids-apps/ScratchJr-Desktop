@@ -16,6 +16,24 @@ let scroll = undefined;
 let watermark;
 
 export default class ScriptsPane {
+    static addEventListeners(element, eventName, handler) {
+        if (isTablet) {
+            // Only add needed events based on eventName
+            switch(eventName) {
+                case 'mousedown':
+                    element.addEventListener('touchstart', handler, {passive: false});
+                    break;
+                case 'mouseup':
+                    element.addEventListener('touchend', handler, {passive: false});
+                    break;
+                case 'mousemove':
+                    element.addEventListener('touchmove', handler, {passive: false});
+                    break;
+            }
+        }
+        element.addEventListener(eventName, handler);
+    }
+
     static get scroll () {
         return scroll;
     }
@@ -24,27 +42,39 @@ export default class ScriptsPane {
         return watermark;
     }
 
-    static createScripts (parent) {
+    static createScripts(parent) {
         var div = newHTML('div', 'scripts', parent);
         div.setAttribute('id', 'scripts');
         watermark = newHTML('div', 'watermark', div);
         var h = Math.max(getDocumentHeight(), frame.offsetHeight);
         setCanvasSize(div, div.offsetWidth, h - div.offsetTop);
-        scroll = new Scroll(div, 'scriptscontainer', div.offsetWidth,
-            h - div.offsetTop, ScratchJr.getActiveScript, ScratchJr.getBlocks);
+
+        if (ScratchJr.getActiveScript && ScratchJr.getBlocks) {
+            scroll = new Scroll(div, 'scriptscontainer', div.offsetWidth,
+                h - div.offsetTop, ScratchJr.getActiveScript, ScratchJr.getBlocks);
+
+            // // Add unified event handling for scripts container
+            // ScriptsPane.addEventListeners(div, 'mousedown', function(e) {
+            //     ScriptsPane.scriptsMouseDown(e);
+            // });
+        }
     }
 
-    static setActiveScript (sprname) {
+    static setActiveScript(sprname) {
         var currentsc = gn(sprname + '_scripts');
         if (!currentsc) {
-            // Sprite not found
             return;
         }
         ScratchJr.stage.currentPage.setCurrentSprite(gn(sprname).owner);
         currentsc.owner.activate();
-        currentsc.parentNode.onmousedown = function (evt) {
-            currentsc.owner.scriptsMouseDown(evt);
-        };
+
+        // Add unified event handling for scripts
+        ScriptsPane.addEventListeners(currentsc.parentNode, 'mousedown', function(evt) {
+            if (currentsc.owner) {
+                currentsc.owner.scriptsMouseDown(evt);
+            }
+        });
+
         scroll.update();
     }
 
@@ -142,26 +172,26 @@ export default class ScriptsPane {
         }
         var thumb;
         switch (Palette.getLandingPlace(script.dragList[0].div, e)) {
-        case 'library':
-            thumb = Palette.getHittedThumb(script.dragList[0].div, gn('spritecc'));
-            if (thumb && (gn(thumb.owner).owner.type == ScratchJr.getSprite().type)) {
-                Thumbs.quickHighlight(thumb);
-            } else {
-                thumb = undefined;
-            }
-            for (var i = 0; i < gn('spritecc').childElementCount; i++) {
-                var spr = gn('spritecc').childNodes[i];
-                if (spr.nodeName == 'FORM') {
-                    continue;
+            case 'library':
+                thumb = Palette.getHittedThumb(script.dragList[0].div, gn('spritecc'));
+                if (thumb && (gn(thumb.owner).owner.type == ScratchJr.getSprite().type)) {
+                    Thumbs.quickHighlight(thumb);
+                } else {
+                    thumb = undefined;
                 }
-                if (thumb && (thumb.id != spr.id)) {
-                    Thumbs.quickRestore(spr);
+                for (var i = 0; i < gn('spritecc').childElementCount; i++) {
+                    var spr = gn('spritecc').childNodes[i];
+                    if (spr.nodeName == 'FORM') {
+                        continue;
+                    }
+                    if (thumb && (thumb.id != spr.id)) {
+                        Thumbs.quickRestore(spr);
+                    }
                 }
-            }
-            break;
-        default:
-            ScriptsPane.removeLibCaret();
-            break;
+                break;
+            default:
+                ScriptsPane.removeLibCaret();
+                break;
         }
     }
 
@@ -176,37 +206,37 @@ export default class ScriptsPane {
         var spr = sc.owner.spr.id;
         var page = ScratchJr.stage.currentPage;
         switch (Palette.getLandingPlace(el, e)) {
-        case 'scripts':
-            var dx = localx(sc, el.left);
-            var dy = localy(sc, el.top);
-            ScriptsPane.blockDropped(sc, dx, dy);
-            break;
-        case 'library':
-            var thumb = Palette.getHittedThumb(el, gn('spritecc'));
-            ScriptsPane.blockDropped(ScratchJr.getActiveScript(), el.startx, el.starty);
-            if (thumb && (gn(thumb.owner).owner.type == gn(page.currentSpriteName).owner.type)) {
-                ScratchJr.storyStart('ScriptsPane.dropBlock:library');
-                ScratchAudio.sndFX('copy.wav');
-                Thumbs.quickHighlight(thumb);
-                setTimeout(function () {
-                    Thumbs.quickRestore(thumb);
-                }, 300);
-                sc = gn(thumb.owner + '_scripts').owner;
-                var strip = Project.encodeStrip(el.owner);
-                var firstblock = strip[0];
-                var delta = sc.gettopblocks().length * 3;
-                firstblock[2] = firstblock[2] + delta;
-                firstblock[3] = firstblock[3] + delta;
-                sc.recreateStrip(strip);
-                spr = thumb.owner;
-            }
-            break;
-        default:
-            ScratchJr.getActiveScript().owner.deleteBlocks();
-            scroll.adjustCanvas();
-            scroll.refresh();
-            scroll.fitToScreen();
-            break;
+            case 'scripts':
+                var dx = localx(sc, el.left);
+                var dy = localy(sc, el.top);
+                ScriptsPane.blockDropped(sc, dx, dy);
+                break;
+            case 'library':
+                var thumb = Palette.getHittedThumb(el, gn('spritecc'));
+                ScriptsPane.blockDropped(ScratchJr.getActiveScript(), el.startx, el.starty);
+                if (thumb && (gn(thumb.owner).owner.type == gn(page.currentSpriteName).owner.type)) {
+                    ScratchJr.storyStart('ScriptsPane.dropBlock:library');
+                    ScratchAudio.sndFX('copy.wav');
+                    Thumbs.quickHighlight(thumb);
+                    setTimeout(function () {
+                        Thumbs.quickRestore(thumb);
+                    }, 300);
+                    sc = gn(thumb.owner + '_scripts').owner;
+                    var strip = Project.encodeStrip(el.owner);
+                    var firstblock = strip[0];
+                    var delta = sc.gettopblocks().length * 3;
+                    firstblock[2] = firstblock[2] + delta;
+                    firstblock[3] = firstblock[3] + delta;
+                    sc.recreateStrip(strip);
+                    spr = thumb.owner;
+                }
+                break;
+            default:
+                ScratchJr.getActiveScript().owner.deleteBlocks();
+                scroll.adjustCanvas();
+                scroll.refresh();
+                scroll.fitToScreen();
+                break;
         }
         Undo.record({
             action: 'scripts',
@@ -248,7 +278,7 @@ export default class ScriptsPane {
     //  Drag Script Background
     //----------------------------------
 
-    static dragBackground (e) {
+    static dragBackground(e) {
         if (Menu.openMenu) {
             return;
         }
@@ -257,6 +287,7 @@ export default class ScriptsPane {
         }
         e.preventDefault();
         e.stopPropagation();
+
         var sc = ScratchJr.getActiveScript();
         sc.top = sc.offsetTop;
         sc.left = sc.offsetLeft;
@@ -264,23 +295,42 @@ export default class ScriptsPane {
         Events.dragmousex = pt.x;
         Events.dragmousey = pt.y;
         Events.dragged = false;
-        ScriptsPane.setDragBackgroundEvents(ScriptsPane.dragMove, ScriptsPane.dragEnd);
+
+        // Set up drag events with unified handling
+        if (isTablet) {
+            window.addEventListener('touchmove', ScriptsPane.dragMove, {passive: false});
+            window.addEventListener('touchend', ScriptsPane.dragEnd, {passive: false});
+        }
+        window.addEventListener('mousemove', ScriptsPane.dragMove);
+        window.addEventListener('mouseup', ScriptsPane.dragEnd);
     }
 
-    static setDragBackgroundEvents (fcnmove, fcnup) {
-        window.ontouchmove = function (evt) {
+    static setDragBackgroundEvents(fcnmove, fcnup) {
+        if (isTablet) {
+            window.addEventListener('touchmove', function(evt) {
+                evt.preventDefault();
                 fcnmove(evt);
-            };
-        window.ontouchend = function (evt) {
+            }, {passive: false});
+            window.addEventListener('touchend', function(evt) {
+                evt.preventDefault();
                 fcnup(evt);
-            };
+            }, {passive: false});
+        }
+        window.addEventListener('mousemove', fcnmove);
+        window.addEventListener('mouseup', fcnup);
     }
 
-    static dragMove (e) {
+    static dragMove(e) {
+        if (isTablet && e.touches && (e.touches.length > 1)) {
+            return;
+        }
+
         var pt = Events.getTargetPoint(e);
         if (!Events.dragged && (Events.distance(Events.dragmousex - pt.x, Events.dragmousey - pt.y) < 5)) {
             return;
         }
+
+        e.preventDefault();
         Events.dragged = true;
         var dx = pt.x - Events.dragmousex;
         var dy = pt.y - Events.dragmousey;
@@ -288,14 +338,21 @@ export default class ScriptsPane {
         Events.dragmousey = pt.y;
         Events.move3D(ScratchJr.getActiveScript(), dx, dy);
         scroll.refresh();
-        e.preventDefault();
     }
 
-    static dragEnd (e) {
-        Events.dragged = false;
+    static dragEnd(e) {
         e.preventDefault();
+        Events.dragged = false;
         Events.clearEvents();
         scroll.bounceBack();
+
+        // Clean up event listeners
+        if (isTablet) {
+            window.removeEventListener('touchmove', ScriptsPane.dragMove);
+            window.removeEventListener('touchend', ScriptsPane.dragEnd);
+        }
+        window.removeEventListener('mousemove', ScriptsPane.dragMove);
+        window.removeEventListener('mouseup', ScriptsPane.dragEnd);
     }
 
     //////////////////////

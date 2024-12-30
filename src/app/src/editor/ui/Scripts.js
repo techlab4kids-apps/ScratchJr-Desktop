@@ -12,6 +12,24 @@ import {gn, newHTML, setCanvasSize, setProps,
     localx, localy, scaleMultiplier, hit3DRect, isTablet} from '../../utils/lib';
 
 export default class Scripts {
+    static addEventListeners(element, eventName, handler) {
+        if (isTablet) {
+            // Only add needed events based on eventName
+            switch(eventName) {
+                case 'mousedown':
+                    element.addEventListener('touchstart', handler, {passive: false});
+                    break;
+                case 'mouseup':
+                    element.addEventListener('touchend', handler, {passive: false});
+                    break;
+                case 'mousemove':
+                    element.addEventListener('touchmove', handler, {passive: false});
+                    break;
+            }
+        }
+        element.addEventListener(eventName, handler);
+    }
+
     constructor (spr) {
         this.flowCaret = null;
         this.spr = spr;
@@ -24,6 +42,11 @@ export default class Scripts {
         this.sc.owner = this;
         this.sc.top = 0;
         this.sc.left = 0;
+
+        let me = this;
+        Scripts.addEventListeners(this.sc, 'mousedown', (evt) => {
+            me.scriptsMouseDown(evt);
+        });
     }
 
     activate () {
@@ -49,7 +72,13 @@ export default class Scripts {
         if (ScratchJr.onHold) {
             return;
         }
-        let target;  
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (ScratchJr.onHold) {
+            return;
+        }
+        let target;
         if (window.event) {
             target = window.event.srcElement;
         } else {
@@ -59,6 +88,7 @@ export default class Scripts {
             return;
         } // editing the current field
         ScratchJr.clearSelection();
+
         if (target.nodeName == 'H3') {
             ScratchJr.blur();
             ScratchJr.editArg(e, target);
@@ -72,33 +102,34 @@ export default class Scripts {
         }
 
         ScratchJr.unfocus(e);
+
         var sc = ScratchJr.getActiveScript();
         var spt = Events.getTargetPoint(e);
         var pt = {
             x: localx(sc, spt.x),
             y: localy(sc, spt.y)
         };
+
+        // Check for block hits
         for (var i = sc.childElementCount - 1; i > -1; i--) {
             var ths = sc.childNodes[i];
-            if (!ths.owner) {
-                continue;
-            }
-            if (ths.owner.isCaret) {
+            if (!ths.owner || ths.owner.isCaret) {
                 continue;
             }
             if (!hit3DRect(ths, pt)) {
                 continue;
             }
-        
-            //    var t = new WebKitCSSMatrix(window.getComputedStyle(ths).webkitTransform);
-            // This line was causing repeat blocks to only drag when touched in the front and top
-            // It seems to have been checking if the drag was on the invisible shadow of the repeat block
-            // It's not clear to me why we would want this, and seems functional without it. -- TM
-            //if ((ths.owner.blocktype == "repeat") && !hitTest(ths.childNodes[1], pixel)) continue;
-            Events.startDrag(e, ths, ScriptsPane.prepareToDrag,
-                ScriptsPane.dropBlock, ScriptsPane.draggingBlock, ScriptsPane.runBlock);
+
+            // Start drag operation for block
+            Events.startDrag(e, ths,
+                ScriptsPane.prepareToDrag,
+                ScriptsPane.dropBlock,
+                ScriptsPane.draggingBlock,
+                ScriptsPane.runBlock
+            );
             return;
         }
+
         ScriptsPane.dragBackground(e);
     }
 
