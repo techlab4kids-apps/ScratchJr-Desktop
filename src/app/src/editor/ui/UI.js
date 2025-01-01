@@ -802,8 +802,13 @@ export default class UI {
 
     static creatTopBarClicky (p, str, mstyle, fcn) {
         var toggle = newHTML('div', mstyle, p);
-        toggle.onmousedown = fcn;
         toggle.setAttribute('id', str);
+
+        // Add both touch and mouse handlers
+        if (isTablet) {
+            toggle.addEventListener('touchstart', fcn, {passive: false});
+        }
+        toggle.onmousedown = fcn;
     }
 
     static fullscreenControls () {
@@ -901,12 +906,18 @@ export default class UI {
     //   Right panel
     /////////////////////////////////////
 
-    static rightPanel (div) {
+    static rightPanel(div) {
         var rp = newHTML('div', 'rightpanel', div);
         var tb = newHTML('div', 'pages', rp);
         tb.setAttribute('id', 'pages');
         var ndiv = newHTML('div', 'pagescc', tb);
         ndiv.setAttribute('id', 'pagecc');
+
+        // Add event listeners for page selection
+        if (isTablet) {
+            ndiv.addEventListener('touchstart', Thumbs.pageMouseDown, {passive: false});
+        }
+        ndiv.addEventListener('mousedown', Thumbs.pageMouseDown);
     }
 
     //////////////////////////////////////

@@ -111,9 +111,13 @@ export default class Thumbs {
             return;
         }
 
-        if (!tb) {
+        if (!tb || tb.id == 'emptypage') {
             return;
         }
+
+        // Clear any existing event handlers
+        Events.clearEvents();
+        Events.clearDragAndDrop();
 
         if (!ScratchJr.isEditable() || (gn('pagecc').childElementCount < 3)) {
             Thumbs.clickOnPage(e, tb.owner);
@@ -321,27 +325,32 @@ export default class Thumbs {
         Events.dragthumbnail = undefined;
     }
 
-    static clickOnPage (e, pagename) {
+    static clickOnPage(e, pagename) {
+        e.preventDefault();
+        e.stopPropagation();
+
         ScratchJr.unfocus(e);
-        var pthumbs = gn('pagecc');
-        for (var i = 0; i < pthumbs.childElementCount; i++) {
-            var thumb = pthumbs.childNodes[i];
-            if (thumb.id == 'emptypage') {
-                continue;
-            }
-        }
+
+        // Don't do anything if clicking current page
         if (ScratchJr.stage.currentPage.id == pagename) {
             return;
         }
+
+        // Change page
         var page = gn(pagename).owner;
         ScratchJr.stage.setPage(page, false);
+
+        // Clear any stray event handlers
+        Events.clearEvents();
+        Events.clearDragAndDrop();
+
+        // Record for undo
         Undo.record({
             action: 'changepage',
             who: pagename,
             where: pagename
         });
     }
-
 
     static startPageShaking (tb) {
         ScratchJr.shaking = tb;
