@@ -146,51 +146,39 @@ function createWindow() {
     }
 
 // Update BrowserView on resize
-    win.on('resize', () => {
-        // const currentView = win.getBrowserView();
-        // win.setBrowserView(null);
-        // currentView.destroy();
+//     win.on('resize', () => {
+//         console.log('Resize event triggered');
+//         if (win.getBrowserView() !== view) {
+//             win.setBrowserView(view);
+//         }
+//         setNewBounds();
+//
+//         // console.log('Bounds updated:', view.getBounds());
+//         view.webContents.focus();
+//
+//         // Check and log view properties
+//         // console.log('View bounds:', view.getBounds());
+//         console.log('View webContents:', view.webContents);
+//     });
+//
+// // If you want special handling on maximize (optional):
+//     win.on('maximize', () => {
+//         setNewBounds();
+//     });
+//
+// // If you handle unmaximize too:
+//     win.on('unmaximize', () => {
+//         setNewBounds();
+//     });
 
-        win.setBrowserView(view);
-
-        setNewBounds();
-        view.webContents.focus();
-        // if (win.webContents.isDevToolsOpened()) {
-        //     win.webContents.closeDevTools();
-        //     win.webContents.openDevTools();
-        // }
-
-        // Force event propagation
-        const [width, height] = win.getContentSize();
-        view.webContents.sendInputEvent({
-            type: 'mouseMove',
-            x: width / 2,
-            y: height / 2
-        });
-
-        // Check and log view properties
-        // console.log('View bounds:', view.getBounds());
-        console.log('View webContents:', view.webContents);
-    });
-
-// If you want special handling on maximize (optional):
-    win.on('maximize', () => {
-        setNewBounds();
-    });
-
-// If you handle unmaximize too:
-    win.on('unmaximize', () => {
-        setNewBounds();
-    });
-
-    win.on('focus', () => console.log('Window focused'));
-    view.webContents.on('focus', () => console.log('BrowserView focused'));
-    view.webContents.on('before-input-event', (event, input) => {
-        console.log('Input event:', input);
-    });
-
-    win.webContents.on('did-finish-load', () => {
-    });
+    // win.on('focus', () => console.log('Window focused'));
+    // view.webContents.on('focus', () => console.log('BrowserView focused'));
+    // view.webContents.on('before-input-event', (event, input) => {
+    //     console.log('Input event:', input);
+    // });
+    //
+    // win.webContents.on('did-finish-load', () => {
+    // });
 }
 
 
