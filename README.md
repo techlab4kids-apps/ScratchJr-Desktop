@@ -59,6 +59,8 @@ you can make a set of Scratch Jr projects as a starter kit.
 
 ## Building
 
+Use Ubuntu 16 Virtual Machine (password ubuntu)
+
 You will need node.js installed. (https://nodejs.org/en/)
 Also git (which you may already have).
 

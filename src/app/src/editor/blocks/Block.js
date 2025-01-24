@@ -19,9 +19,21 @@ export default class Block {
     constructor (spec, isPalette, scale) {
         this.div = document.createElement('div');
 
-        // Set touch-action and pointer events properly for the main div
+        // Handle both touch and mouse events
         setProps(this.div.style, {
             touchAction: 'none', // Prevent default touch behaviors
+            pointerEvents: 'none'
+        });
+
+        // Enable touch events on block elements that need interaction
+        this.blockshape = document.createElement('canvas');
+        setProps(this.blockshape.style, {
+            touchAction: 'none',
+            pointerEvents: 'all'
+        });
+
+        // Top-level block parent shouldn't accept pointer events
+        setProps(this.div.style, {
             pointerEvents: 'none'
         });
 
@@ -40,8 +52,7 @@ export default class Block {
                 (-this.blockshape.height / 2) + 'px) ' +
                 'scale(' + (1 / window.devicePixelRatio) + ') ' +
                 'translate(' + (this.blockshape.width / 2) + 'px, ' + (this.blockshape.height / 2) + 'px)',
-            pointerEvents: 'all',
-            touchAction: 'none'
+            pointerEvents: 'all'
         });
         this.addHighlight();
         this.drawBlock();
@@ -52,6 +63,13 @@ export default class Block {
         }
         this.createArgument();
         this.div.owner = this;
+
+        // Enable touch events on block elements that need interaction
+        this.blockshape = document.createElement('canvas');
+        setProps(this.blockshape.style, {
+            touchAction: 'none',
+            pointerEvents: 'all'
+        });
     }
 
     getWidth () {

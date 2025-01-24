@@ -1,17 +1,10 @@
 ////////////////////////////////////////////////////////////
-
 // Sprites
-
 // Loading and Creation Strategy
-
 //  a. Set data variables
-
 //  b. Load SVG as IMG
-
 //  c. Load SVG as text
-
 //  d. Create Mask for pixel detection and cache it on the browser
-
 ////////////////////////////////////////////////////////////
 
 import ScratchJr from '../ScratchJr';
@@ -31,96 +24,23 @@ import Events from '../../utils/Events';
 import Localization from '../../utils/Localization';
 import ScratchAudio from '../../utils/ScratchAudio';
 import Scripts from '../ui/Scripts';
-import {
-    newHTML, newDiv, newP, gn,
+import {newHTML, newDiv, newP, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
     DEGTOR, getIdFor, setProps, isTablet, isiOS,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
-    globaly, globalx, rgbToHex
-} from '../../utils/lib';
+    globaly, globalx, rgbToHex} from '../../utils/lib';
+
 
 export default class Sprite {
-
-    constructor(attr, whenDone) {
-        this.initialScale = attr.scale || 1;
+    constructor (attr, whenDone) {
         if (attr.type == 'sprite') {
             this.createSprite(attr.page, attr.md5, attr.id, attr, whenDone);
         } else {
             this.createText(attr, whenDone);
         }
-        this.initDragAndDrop();
     }
 
-    initDragAndDrop() {
-        // Store initial scale when sprite is created
-        if (!this.initialScale) {
-            this.initialScale = this.scale || 1;
-        }
-
-        this.div.addEventListener('mousedown', this.onDragStart.bind(this));
-        this.div.addEventListener('touchstart', this.onDragStart.bind(this), {passive: false});
-        document.addEventListener('mousemove', this.onDragMove.bind(this));
-        document.addEventListener('touchmove', this.onDragMove.bind(this), {passive: false});
-        document.addEventListener('mouseup', this.onDragEnd.bind(this));
-        document.addEventListener('touchend', this.onDragEnd.bind(this));
-    }
-
-    onDragStart(event) {
-        event.preventDefault();
-        const isTouch = event.type === 'touchstart';
-        const point = isTouch ? event.touches[0] : event;
-        this.dragging = true;
-        this.startX = point.clientX;
-        this.startY = point.clientY;
-        this.initialX = this.xcoor;
-        this.initialY = this.ycoor;
-        // Store initial scale
-        this.dragStartScale = this.scale;
-        // Store initial dimensions
-        this.dragStartWidth = this.w;
-        this.dragStartHeight = this.h;
-    }
-
-    onDragMove(event) {
-        if (!this.dragging) return;
-        event.preventDefault();
-        const isTouch = event.type === 'touchmove';
-        const point = isTouch ? event.touches[0] : event;
-        const deltaX = point.clientX - this.startX;
-        const deltaY = point.clientY - this.startY;
-
-        // Update position while maintaining scale
-        this.setPos(this.initialX + deltaX, this.initialY + deltaY);
-
-        // Ensure scale hasn't changed
-        if (this.scale !== this.dragStartScale) {
-            this.scale = this.dragStartScale;
-        }
-
-        // Force render with correct scale
-        this.render();
-    }
-
-    onDragEnd() {
-        if (this.dragging) {
-            // Update home position to match current position
-            this.homex = this.xcoor;
-            this.homey = this.ycoor;
-            this.dragging = false;
-        }
-    }
-
-    resetToInitialState() {
-        // Reset to initial scale when green flag is pressed
-        if (this.initialScale) {
-            this.setScaleTo(this.initialScale);
-        } else {
-            // If no initial scale is set, use default or 1
-            this.setScaleTo(this.defaultScale || 1);
-        }
-    }
-
-    createSprite(page, md5, id, attr, fcn) {
+    createSprite (page, md5, id, attr, fcn) {
         ScratchJr.storyStart('Sprite.prototype.createSprite');
         this.div = document.createElement('div');
         setProps(this.div.style, {
@@ -128,6 +48,7 @@ export default class Sprite {
             left: '0px',
             top: '0px'
         });
+        //document.createElement('img');
         this.div.owner = this;
         this.div.id = id;
         this.id = id;
@@ -148,14 +69,13 @@ export default class Sprite {
         var me = this;
         page.div.appendChild(this.div);
         this.div.style.visibility = 'hidden';
-        this.getAsset(gotImage);
-
-        function gotImage(dataurl) {
+        this.getAsset(gotImage); // sets the SVG and the image
+        function gotImage (dataurl) {
             me.setCostume(dataurl, fcn);
         }
     }
 
-    getAsset(whenDone) {
+    getAsset (whenDone) {
         var md5 = this.md5;
         var spr = this;
         var url = (MediaLib.keys[md5]) ? MediaLib.path + md5 : (md5.indexOf('/') < 0) ? iOS.path + md5 : md5;
@@ -165,16 +85,14 @@ export default class Sprite {
         } else {
             iOS.getmedia(md5, nextStep);
         }
-
-        function nextStep(base64) {
+        function nextStep (base64) {
             doNext(atob(base64));
         }
-
-        function doNext(str) {
+        function doNext (str) {
             str = str.replace(/>\s*</g, '><');
             spr.setSVG(str);
             if ((str.indexOf('xlink:href') < 0) && iOS.path) {
-                whenDone(url);
+                whenDone(url); // does not have embedded images
             } else {
                 var base64 = IO.getImageDataURL(spr.md5, btoa(str));
                 IO.getImagesInSVG(str, function () {
@@ -184,7 +102,7 @@ export default class Sprite {
         }
     }
 
-    setSVG(str) {
+    setSVG (str) {
         var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
         var extxml = document.importNode(xmlDoc.documentElement, true);
         if (extxml.childNodes[0].nodeName == '#comment') {
@@ -193,7 +111,7 @@ export default class Sprite {
         this.svg = extxml;
     }
 
-    setCostume(dataurl, fcn) {
+    setCostume (dataurl, fcn) {
         var img = document.createElement('img');
         img.src = dataurl;
         this.img = img;
@@ -215,7 +133,7 @@ export default class Sprite {
         }
     }
 
-    displaySprite(whenDone) {
+    displaySprite (whenDone) {
         var w = this.img.width;
         var h = this.img.height;
         this.div.style.width = this.img.width + 'px';
@@ -228,7 +146,7 @@ export default class Sprite {
         this.doRender(whenDone);
     }
 
-    doRender(whenDone) {
+    doRender (whenDone) {
         this.drawBorder(); // canvas draw border
         this.render();
         SVG2Canvas.drawInCanvas(this); // canvas draws mask for pixel detection
@@ -239,7 +157,7 @@ export default class Sprite {
         }
     }
 
-    drawBorder() {
+    drawBorder () {
         // TODO: Merge these to get better thumbnail rendering on iOS
         var w, h, extxml;
         if (isAndroid) {
@@ -266,7 +184,7 @@ export default class Sprite {
     // sprite thumbnail
     /////////////////////////////////////
 
-    spriteThumbnail(p) {
+    spriteThumbnail (p) {
         var tb = newHTML('div', 'spritethumb off', p);
         tb.setAttribute('id', getIdFor('spritethumb'));
         tb.type = 'spritethumb';
@@ -288,7 +206,7 @@ export default class Sprite {
         return tb;
     }
 
-    updateSpriteThumb() {
+    updateSpriteThumb () {
         var tb = this.thumbnail;
         if (!tb) {
             return;
@@ -298,7 +216,7 @@ export default class Sprite {
         tb.childNodes[1].textContent = this.name;
     }
 
-    drawMyImage(cnv, w, h) {
+    drawMyImage (cnv, w, h) {
         if (!this.img) {
             return;
         }
@@ -333,16 +251,17 @@ export default class Sprite {
     // sprite Primitives
     //////////////////////////////////////////////////////////////////////////////
 
-    goHome() {
+    goHome () {
         this.setPos(this.homex, this.homey);
-        this.setScaleTo(this.homescale);           // Use setScaleTo instead of direct assignment
+        this.scale = this.homescale;
         this.shown = this.homeshown;
+        //	this.flip = this.homeflip;  // kept here just in case we want it
         this.div.style.opacity = this.shown ? 1 : 0;
         this.setHeading(0);
         this.render();
     }
 
-    touchingAny() {
+    touchingAny () {
         if (!this.shown) {
             return false;
         }
@@ -378,7 +297,7 @@ export default class Sprite {
         return false;
     }
 
-    verifyHit(other) {
+    verifyHit (other) {
         var ctx = ScratchJr.workingCanvas.getContext('2d');
         var ctx2 = ScratchJr.workingCanvas2.getContext('2d');
         ctx.clearRect(0, 0, 480, 360);
@@ -424,24 +343,31 @@ export default class Sprite {
         return false;
     }
 
-    getAlpha(data, node, w) {
+    getAlpha (data, node, w) {
         return data[(node.x * 4) + node.y * w * 4 + 3];
     }
 
-    setHeading(angle) {
+    setHeading (angle) {
         this.angle = angle % 360;
         this.render();
     }
 
-    setPos(dx, dy) {
-        const currentScale = this.scale; // Store current scale
+    setPos (dx, dy) {
+        this.dirx = ((dx - this.xcoor) == 0) ? 1 : (dx - this.xcoor) / Math.abs(dx - this.xcoor);
+        this.diry = ((dy - this.ycoor) == 0) ? 1 : (dy - this.ycoor) / Math.abs(dy - this.ycoor);
         this.xcoor = dx;
         this.ycoor = dy;
-        this.scale = currentScale; // Ensure scale is maintained
+        this.wrap();
         this.render();
+        setProps(this.div.style, {
+            position: 'absolute',
+            left: '0px',
+            top: '0px'
+        });
+        this.updateBubble();
     }
 
-    wrap() {
+    wrap () {
         if (this.type == 'text') {
             this.wrapText();
         } else {
@@ -449,7 +375,7 @@ export default class Sprite {
         }
     }
 
-    wrapChar() {
+    wrapChar () {
         if (this.xcoor < 0) {
             this.xcoor = 480 + this.xcoor;
         }
@@ -464,7 +390,7 @@ export default class Sprite {
         }
     }
 
-    wrapText() {
+    wrapText () {
         var max = this.cx > 480 ? this.cx : 480;
         var min = this.cx > 480 ? 480 - this.cx : 0;
         if (this.xcoor < min) {
@@ -481,29 +407,54 @@ export default class Sprite {
         }
     }
 
-    render() {
-        if (this.img) {
-            // Store the current transform state
-            const translateX = this.xcoor - this.cx * this.scale;
-            const translateY = this.ycoor - this.cy * this.scale;
-
-            // Separate transforms for better control
-            let transforms = [
-                `translate3d(${translateX}px, ${translateY}px, 0px)`,
-                `rotate(${this.angle || 0}deg)`,
-                this.flip ? `scale(-${this.scale}, ${this.scale})` : `scale(${this.scale}, ${this.scale})`
-            ];
-
-            // Apply transforms in correct order
-            this.div.style.transform = transforms.join(' ');
-
-            // Set dimensions
-            this.div.style.width = `${this.w}px`;
-            this.div.style.height = `${this.h}px`;
+    render () {
+        // TODO: Merge these to get better thumbnail rendering on iOS
+        var dx, dy, mtx;
+        if (isAndroid) {
+            mtx = '';
+            if (this.img) {
+                dx = this.xcoor - this.cx * this.scale;
+                dy = this.ycoor - this.cy * this.scale;
+                mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
+                mtx += ' rotate(' + this.angle + 'deg)';
+                if (this.flip) {
+                    mtx += ' scale(-1, 1)';
+                } else {
+                    mtx += ' scale(1, 1)';
+                }
+                var w = (this.originalImg.width * this.scale);
+                var h = (this.originalImg.height * this.scale);
+                this.div.style.width = w + 'px';
+                this.div.style.height = h + 'px';
+                if (this.border) {
+                    this.border.style.width = w + 'px';
+                    this.border.style.height = h + 'px';
+                }
+                this.img.style.width = w + 'px';
+                this.img.style.height = h + 'px';
+            } else {
+                dx = this.xcoor - this.cx;
+                dy = this.ycoor - this.cy;
+                mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
+            }
+            this.setTransform(mtx);
+        } else {
+            dx = this.xcoor - this.cx;
+            dy = this.ycoor - this.cy;
+            mtx = 'translate3d(' + dx + 'px,' + dy + 'px, 0px)';
+            if (this.img) {
+                mtx += ' rotate(' + this.angle + 'deg)';
+                if (this.flip) {
+                    mtx += 'scale(' + -this.scale + ', ' + this.scale + ')';
+                } else {
+                    mtx += 'scale(' + this.scale + ', ' + this.scale + ')';
+                }
+            }
+            this.setTransform(mtx);
         }
     }
 
-    select() {
+    select () {
         if (this.borderOn) {
             return;
         }
@@ -529,7 +480,7 @@ export default class Sprite {
         this.render();
     }
 
-    unselect() {
+    unselect () {
         if (!this.borderOn) {
             return;
         }
@@ -540,40 +491,40 @@ export default class Sprite {
         this.borderOn = false;
     }
 
-    setTransform(transform) {
+    setTransform (transform) {
         this.div.style.webkitTransform = transform;
     }
 
-    screenLeft() {
+    screenLeft () {
         return Math.round(this.xcoor - this.cx * this.scale);
     }
 
-    screenTop() {
+    screenTop () {
         return Math.round(this.ycoor - this.cy * this.scale);
     }
 
-    noScaleFor() {
+    noScaleFor () {
         this.setScaleTo(this.defaultScale);
     }
 
-    changeSizeBy(num) {
-        let newScale = this.scale + (num / 100);   // If num is a percentage increment
-        this.setScaleTo(newScale);
+    changeSizeBy (num) {
+        var n = Number(num) + Number(this.scale) * 100;
+        this.scale = this.getScale(n / 100);
+        this.setPos(this.xcoor, this.ycoor);
+        this.render();
     }
 
-    setScaleTo(n) {
-        // Don't change scale during drag operations
-        if (this.dragging) return;
-
-        const clamped = this.getScale(n);
-        if (clamped !== this.scale) {
-            this.scale = clamped;
-            this.setPos(this.xcoor, this.ycoor);
-            this.render();
+    setScaleTo (n) {
+        n = this.getScale(n);
+        if (n == this.scale) {
+            return;
         }
+        this.scale = n;
+        this.setPos(this.xcoor, this.ycoor);
+        this.render();
     }
 
-    getScale(n) {
+    getScale (n) {
         var mins = Math.max(Math.max(this.w, this.h) * n, 36);
         var maxs = Math.min(Math.min(this.w, this.h) * n, 360);
         if (mins == 36) {
@@ -585,7 +536,7 @@ export default class Sprite {
         return n;
     }
 
-    getBox() {
+    getBox () {
         var box = {
             x: this.screenLeft(),
             y: this.screenTop(),
@@ -595,7 +546,7 @@ export default class Sprite {
         return box;
     }
 
-    getBoxWithEffects() {
+    getBoxWithEffects () {
         if (this.type == 'text') {
             return new Rectangle(this.screenLeft(), this.screenTop(), this.w * this.scale, this.h * this.scale);
         }
@@ -610,7 +561,7 @@ export default class Sprite {
     // Balloon
     //////////////////////////////////////////////////
 
-    closeBalloon() {
+    closeBalloon () {
         if (!this.balloon) {
             return;
         }
@@ -618,7 +569,7 @@ export default class Sprite {
         this.balloon = undefined;
     }
 
-    openBalloon(label) {
+    openBalloon (label) {
         if (this.balloon) {
             this.closeBalloon();
         }
@@ -674,7 +625,7 @@ export default class Sprite {
         this.drawBalloon();
     }
 
-    updateBubble() {
+    updateBubble () {
         if (this.balloon == null) {
             return;
         }
@@ -694,7 +645,7 @@ export default class Sprite {
         this.drawBalloon();
     }
 
-    drawBalloon() {
+    drawBalloon () {
         var img = this.balloon.childNodes[0];
         var w = this.balloon.offsetWidth;
         var h = this.balloon.offsetHeight;
@@ -728,7 +679,7 @@ export default class Sprite {
     // Sprite rendering
     ////////////////////////////////////
 
-    stamp(ctx, deltax, deltay) {
+    stamp (ctx, deltax, deltay) {
         var w = this.outline.width * this.scale;
         var h = this.outline.height * this.scale;
         var dx = deltax ? deltax : 0;
@@ -747,7 +698,7 @@ export default class Sprite {
     // Text Creation
     /////////////////////////////////////
 
-    createText(attr, whenDone) {
+    createText (attr, whenDone) {
         var page = attr.page;
         setProps(this, attr);
         this.div = newHTML('p', 'textsprite', page.div);
@@ -783,9 +734,19 @@ export default class Sprite {
                 whenDone(this);
             }
         }
+
+        if (isTablet) {
+            this.div.addEventListener('touchstart', (evt) => {
+                evt.preventDefault();
+                this.clickOnText(evt);
+            }, {passive: false});
+        }
+        this.div.addEventListener('mousedown', (evt) => {
+            this.clickOnText(evt);
+        });
     }
 
-    setTextBox() {
+    setTextBox () {
         var sform = document.forms.activetextbox;
         sform.textsprite = this;
         var box = this.getBox();
@@ -849,7 +810,7 @@ export default class Sprite {
         }
     }
 
-    unfocusText() {
+    unfocusText () {
         ScratchJr.blur();
         document.body.scrollTop = 0;
         document.body.scrollLeft = 0;
@@ -886,7 +847,7 @@ export default class Sprite {
         }
     }
 
-    deleteText(record) {
+    deleteText (record) {
         var id = this.id;
         var page = ScratchJr.stage.currentPage;
         page.textstartat = (this.ycoor + (this.fontsize * 1.35)) > 360 ? 36 : this.ycoor;
@@ -911,7 +872,7 @@ export default class Sprite {
         }
     }
 
-    noChars(str) {
+    noChars (str) {
         for (var i = 0; i < str.length; i++) {
             if (str[i] != ' ') {
                 return false;
@@ -920,57 +881,63 @@ export default class Sprite {
         return true;
     }
 
-    contractText() {
+    contractText () {
         var form = document.forms.activetextbox;
         this.str = form.typing.value.substring(0, form.typing.maxLength);
         this.recalculateText();
     }
 
     clickOnText(e) {
+        e.preventDefault();
         e.stopPropagation();
+
         this.setTextBox();
         gn('textbox').style.visibility = 'visible';
         this.div.style.visibility = 'hidden';
         this.activateInput();
     }
 
-    activateInput() {
+
+    activateInput () {
         this.oldvalue = this.str;
         var ti = document.forms.activetextbox.typing;
         gn('textbox').style.visibility = 'visible';
+
         var me = this;
-        ti.onblur = function () {
+
+        // Handle blur
+        ti.addEventListener('blur', () => {
             me.unfocusText();
-        };
-        ti.onkeypress = function (evt) {
+        });
+
+        // Handle key events
+        ti.addEventListener('keypress', (evt) => {
             me.handleWrite(evt);
-        };
-        ti.onkeyup = function (evt) {
+        });
+
+        ti.addEventListener('keyup', (evt) => {
             me.handleKeyUp(evt);
-        };
-        ti.onsubmit = function () {
-            me.unfocusText();
-        };
+        });
+
+        // Focus handling for different devices
         if (isAndroid) {
-            setTimeout(function () {
+            setTimeout(() => {
                 ti.focus();
             }, 500);
 
-            ScratchJr.onBackButtonCallback.push(function () {
+            ScratchJr.onBackButtonCallback.push(() => {
                 me.unfocusText();
             });
+        } else if (isTablet) {
+            ti.focus();
         } else {
-            if (isTablet) {
+            setTimeout(() => {
                 ti.focus();
-            } else {
-                setTimeout(function () {
-                    ti.focus();
-                }, 100);
-            }
+            }, 100);
         }
     }
 
-    handleWrite(e) {
+    handleWrite (e) {
         var key = e.keyCode || e.which;
         var ti = e.target;
         if (key == 13) {
@@ -984,7 +951,7 @@ export default class Sprite {
         }
     }
 
-    handleKeyUp(e) {
+    handleKeyUp (e) {
         var ti = e.target;
         if (!(ti.parentNode).textsprite) {
             return;
@@ -992,14 +959,14 @@ export default class Sprite {
         (ti.parentNode).textsprite.str = ti.value;
     }
 
-    deactivateInput() {
+    deactivateInput () {
         var ti = document.forms.activetextbox.typing;
         ti.onblur = undefined;
         ti.onkeypress = undefined;
         ti.onsubmit = undefined;
     }
 
-    activate() {
+    activate () {
         var list = fitInRect(this.w, this.h, ScriptsPane.watermark.offsetWidth, ScriptsPane.watermark.offsetHeight);
         var div = ScriptsPane.watermark;
         while (div.childElementCount > 0) {
@@ -1017,7 +984,7 @@ export default class Sprite {
         setProps(img.style, attr);
     }
 
-    getSVGimage(svg) {
+    getSVGimage (svg) {
         var img = document.createElement('img');
         var str = (new XMLSerializer()).serializeToString(svg);
         str = str.replace(/ href="data:image/g, ' xlink:href="data:image');
@@ -1029,12 +996,12 @@ export default class Sprite {
     // Text fcn
     ////////////////////////////////////////////////
 
-    setColor(c) {
+    setColor (c) {
         this.color = c;
         this.div.style.color = this.color;
     }
 
-    setFontSize(n) {
+    setFontSize (n) {
         if (n < 12) {
             n = 12;
         }
@@ -1044,7 +1011,7 @@ export default class Sprite {
         this.fontsize = n;
     }
 
-    recalculateText() {
+    recalculateText () {
         this.div.style.color = this.color;
         this.div.style.fontSize = this.fontsize + 'px';
         this.div.textContent = this.str;
@@ -1066,30 +1033,31 @@ export default class Sprite {
         this.setPos(this.xcoor, this.ycoor);
     }
 
-    startShaking() {
+    startShaking () {
         var p = this.div.parentNode;
         var shake = newHTML('div', 'shakeme', p);
         shake.id = 'shakediv';
 
         // TODO: merge these for iOS
-        if (isAndroid) {
-            setProps(shake.style, {
-                position: 'absolute',
-                left: this.screenLeft() + 'px',
-                top: this.screenTop() + 'px',
-                width: (this.w * this.scale) + 'px',
-                height: (this.h * this.scale) + 'px'
-            });
-        } else {
-            setProps(shake.style, {
-                position: 'absolute',
-                left: (this.screenLeft() / this.scale) + 'px',
-                top: (this.screenTop() / this.scale) + 'px',
-                width: this.w + 'px',
-                height: this.h + 'px',
-                zoom: Math.floor(this.scale * 100) + '%'
-            });
-        }
+        // if (isAndroid) {
+        setProps(shake.style, {
+            position: 'absolute',
+            left: this.screenLeft() + 'px',
+            top: this.screenTop() + 'px',
+            width: (this.w * this.scale) + 'px',
+            height: (this.h * this.scale) + 'px'
+        });
+        // } else {
+        // setProps(shake.style, {
+        //         position: 'absolute',
+        //         left: (this.screenLeft() / this.scale) + 'px',
+        //         top: (this.screenTop() / this.scale) + 'px',
+        //         width: this.w + 'px',
+        //         height: this.h + 'px',
+        //         zoom: Math.floor(this.scale * 100) + '%'
+        //     }
+        // );
+        // }
         var mtx = 'translate3d(0px, 0px, 0px)';
         if (this.img) {
             mtx += ' rotate(' + this.angle + 'deg)';
@@ -1101,22 +1069,46 @@ export default class Sprite {
         }
         this.setTransform(mtx);
         shake.appendChild(this.div);
-        var cb = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
+
+        const deleteButton = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
+
+        if (isTablet) {
+            deleteButton.addEventListener('touchstart', (evt) => {
+                evt.preventDefault();
+                this.deleteSprite();
+            }, {passive: false});
+        }
+        deleteButton.addEventListener('mousedown', (evt) => {
+            this.deleteSprite();
+        });
+
+        // var deleteButton = newHTML('div', (this.type == 'sprite') ? 'deletesprite' : 'deletetext', shake);
         if (isiOS && this.type == 'sprite') {
-            cb.style.zoom = Math.floor((1 / this.scale) * 100) + '%';
+            // deleteButton.style.zoom = Math.floor((1 / this.scale) * 100) + '%';
+            deleteButton.style.zoom = '100%';
         }
-        if ((globalx(cb) - globalx(ScratchJr.stage.div)) < 0) {
-            cb.style.left = Math.abs(globalx(cb) - globalx(ScratchJr.stage.div)) * this.scale + 'px';
+        if ((globalx(deleteButton) - globalx(ScratchJr.stage.div)) < 0) {
+            deleteButton.style.left = Math.abs(globalx(deleteButton) - globalx(ScratchJr.stage.div)) * this.scale + 'px';
         }
-        if ((globaly(cb) - globaly(ScratchJr.stage.div)) < 0) {
-            cb.style.top = Math.abs(globaly(cb) - globaly(ScratchJr.stage.div)) * this.scale + 'px';
+        if ((globaly(deleteButton) - globaly(ScratchJr.stage.div)) < 0) {
+            deleteButton.style.top = Math.abs(globaly(deleteButton) - globaly(ScratchJr.stage.div)) * this.scale + 'px';
         }
-        cb.id = 'deletesprite';
+        deleteButton.id = 'deletesprite';
         this.div = shake;
         this.div.owner = this;
     }
 
-    stopShaking() {
+    deleteSprite() {
+        // Move deletion logic here
+        if (this.div.id == 'shakediv') {
+            var p = this.div;
+            this.div = this.div.childNodes[0];
+            ScratchJr.stage.currentPage.div.appendChild(this.div);
+            p.parentNode.removeChild(p);
+        }
+    }
+
+    stopShaking () {
         if (this.div.id != 'shakediv') {
             return;
         }
@@ -1144,7 +1136,7 @@ export default class Sprite {
         }
     }
 
-    drawCloseButton() {
+    drawCloseButton () {
         var ctx = this.div.getContext('2d');
         var img = document.createElement('img');
         img.src = 'assets/ui/closeit.svg';
@@ -1161,7 +1153,7 @@ export default class Sprite {
     // Save data
     /////////////////////////////////////////
 
-    getData() {
+    getData () {
         var data = (this.type == 'sprite') ? this.getSpriteData() : this.getTextBoxData();
         if (this.type != 'sprite') {
             return data;
@@ -1176,7 +1168,7 @@ export default class Sprite {
         return data;
     }
 
-    getSpriteData() {
+    getSpriteData () {
         var data = {};
         data.shown = this.shown;
         data.type = this.type;
@@ -1203,7 +1195,7 @@ export default class Sprite {
         return data;
     }
 
-    getTextBoxData() {
+    getTextBoxData () {
         var data = {};
         data.shown = this.shown;
         data.type = this.type;
@@ -1222,5 +1214,4 @@ export default class Sprite {
         data.fontsize = this.fontsize;
         return data;
     }
-
 }

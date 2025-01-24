@@ -45,12 +45,12 @@ const {app, dialog, BrowserWindow, BrowserView, ipcMain, Menu} = require('electr
 
 const DEBUG = isDev;
 const DEBUG_DATABASE = DEBUG && false;
-const DEBUG_FILEIO = DEBUG && true;
+const DEBUG_FILEIO = DEBUG && false;
 const DEBUG_RESOURCEIO = DEBUG && false;
 const DEBUG_CLEANASSETS = DEBUG && false;
-const DEBUG_NYI = DEBUG && true;
+const DEBUG_NYI = DEBUG && false;
 // const DEBUG_LOAD_DEVTOOLS = DEBUG && true;
-const DEBUG_LOAD_DEVTOOLS = false;
+const DEBUG_LOAD_DEVTOOLS = true;
 
 
 // Debugging the electron process:
@@ -89,14 +89,14 @@ function createWindow() {
     // Create the browser window.
 
     win = new BrowserWindow({
-        fullscreen: true,
+        fullscreen: false,
         width: 1350,
         height: 750,
-        minHeight: 750,
-        minWidth: 1000,
+        // minHeight: 750,
+        // minWidth: 1000,
         resizable: true,
         maximizable: true,
-        center: true,
+        // center: true,
         customVar: 'elephants',
         isDebug: DEBUG
     });
@@ -109,15 +109,9 @@ function createWindow() {
         },
     });
 
-    // Automatically resize the view to fill the window's content area
-    view.setAutoResize({ width: true, height: true });
     dataStore = new ScratchJRDataStore(win);
     win.setBrowserView(view);
-
-
-    dataStore = new ScratchJRDataStore(win);
-    win.setBrowserView(view);
-
+    win.maximize();
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -126,7 +120,6 @@ function createWindow() {
         slashes: true,
 
     }));
-    //win.loadFile(`${__dirname}/app/index.html`);
 
     if (DEBUG_LOAD_DEVTOOLS) {
         // Open the DevTools.
@@ -146,26 +139,46 @@ function createWindow() {
         win = null;
     });
 
-    // Update BrowserView on resize
-    win.on('resize', () => {
-        const { width, height } = win.getContentBounds();
-        view.setBounds({ x: 0, y: 0, width, height });
-    });
+    function setNewBounds() {
 
-// If you want special handling on maximize (optional):
-    win.on('maximize', () => {
-        const { width, height } = win.getContentBounds();
+        const [width, height] = win.getContentSize(); // More accurate dimensions
         view.setBounds({ x: 0, y: 0, width, height });
-    });
+    }
 
-// If you handle unmaximize too:
-    win.on('unmaximize', () => {
-        const { width, height } = win.getContentBounds();
-        view.setBounds({ x: 0, y: 0, width, height });
-    });
+// Update BrowserView on resize
+//     win.on('resize', () => {
+//         console.log('Resize event triggered');
+//         if (win.getBrowserView() !== view) {
+//             win.setBrowserView(view);
+//         }
+//         setNewBounds();
+//
+//         // console.log('Bounds updated:', view.getBounds());
+//         view.webContents.focus();
+//
+//         // Check and log view properties
+//         // console.log('View bounds:', view.getBounds());
+//         console.log('View webContents:', view.webContents);
+//     });
+//
+// // If you want special handling on maximize (optional):
+//     win.on('maximize', () => {
+//         setNewBounds();
+//     });
+//
+// // If you handle unmaximize too:
+//     win.on('unmaximize', () => {
+//         setNewBounds();
+//     });
 
-    win.webContents.on('did-finish-load', () => {
-    });
+    // win.on('focus', () => console.log('Window focused'));
+    // view.webContents.on('focus', () => console.log('BrowserView focused'));
+    // view.webContents.on('before-input-event', (event, input) => {
+    //     console.log('Input event:', input);
+    // });
+    //
+    // win.webContents.on('did-finish-load', () => {
+    // });
 }
 
 
@@ -522,7 +535,9 @@ class ScratchJRDataStore {
      @param {object} data
      */
     getMD5(data) { // eslint-disable class-methods-use-this
-        return crypto.createHash('md5').update(data).digest('hex');
+        return crypto.createHash('md5')
+            .update(data)
+            .digest('hex');
     }
 
 

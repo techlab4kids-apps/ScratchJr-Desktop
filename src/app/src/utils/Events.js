@@ -95,30 +95,21 @@ export default class Events {
     // which causes delays while the content is reflowed, we create a
     // small drag div that is a parent of frame that the dragging block
     // can be a child of. This improves dragging performance.
-    static init() {
+    static init () {
         dragDiv = document.createElement('div');
         dragDiv.id = 'dragDiv';
         dragDiv.style.position = 'absolute';
         dragDiv.style.width = '0px';
         dragDiv.style.height = '0px';
         dragDiv.style.zIndex = 7001;
-
-        // Prevent default touch behaviors
-        dragDiv.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-        dragDiv.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-
         var frameDiv = gn('frame');
         frameDiv.appendChild(dragDiv);
     }
-
     static startDrag (e, c, atstart, atend, atdrag, atclick, athold) {
-        // Prevent default behavior for touch events
-        if (e.type.startsWith('touch')) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        console.log("Starting drag & drop");
 
         dragged = false;
+
         var pt = Events.getTargetPoint(e);
         dragmousex = pt.x;
         dragmousey = pt.y;
@@ -126,50 +117,23 @@ export default class Events {
         fcnstart = atstart;
         fcnend = atend;
         fcnclick = atclick;
+        updatefcn = atdrag;
 
         if (athold) {
             Events.holdit(c, athold);
         }
-        updatefcn = atdrag;
 
         if (isTablet) {
             delta = 20 * scaleMultiplier;
-            window.addEventListener('touchmove', Events.touchMove, { passive: false });
+            window.addEventListener('touchmove', Events.touchMove, {passive: false});
             window.addEventListener('touchend', Events.touchEnd);
             window.addEventListener('touchcancel', Events.touchEnd);
-            window.addEventListener('touchleave', Events.touchEnd);
+
         } else {
             delta = 10;
             window.addEventListener('mousemove', Events.mouseMove);
             window.addEventListener('mouseup', Events.mouseUp);
         }
-    }
-
-    static touchMove (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (e.touches.length !== 1) {
-            if (updatefcn) {
-                updatefcn(e, dragcanvas);
-            }
-            Events.touchEnd(e);
-            return;
-        }
-
-        // Convert touch event to mouse-like event with proper coordinates
-        const touch = e.touches[0];
-        const mouseEvent = {
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            pageX: touch.pageX,
-            pageY: touch.pageY,
-            preventDefault: () => e.preventDefault(),
-            stopPropagation: () => e.stopPropagation(),
-            target: touch.target
-        };
-
-        Events.mouseMove(mouseEvent);
     }
 
     static holdit (c, fcn) {
@@ -178,10 +142,11 @@ export default class Events {
             fcn(dragthumbnail);
             Events.clearDragAndDrop();
         };
-        timeoutEvent = setTimeout(repeat, 500);
+        timeoutEvent = setTimeout(repeat, 3000);
     }
 
     static clearDragAndDrop () {
+        console.log("Clearing drag & drop");
         timeoutEvent = undefined;
         dragcanvas = undefined;
         dragged = false;
@@ -192,26 +157,36 @@ export default class Events {
         fcnclick = undefined;
     }
 
-    static touchEnd (e) {
+    static touchMove(e) {
         if (e.touches.length > 1) {
             return;
         }
-        if (updatefcn) {
-            updatefcn(e, dragcanvas); // update to final position
+        e.preventDefault();
+        Events.mouseMove(e);
+    }
+
+    static touchEnd(e) {
+        if (e.touches.length > 1) {
+            return;
         }
+        e.preventDefault();
+        // if (updatefcn) {
+        //     updatefcn(e, dragcanvas);
+        // }
         Events.mouseUp(e);
     }
+
     static mouseMove (e) {
-        // be forgiving about the click
         var pt = Events.getTargetPoint(e);
-        if (!dragged && (Events.distance(dragmousex - pt.x, dragmousey - pt.y) < delta)) {
+        let distance = Events.distance(dragmousex - pt.x, dragmousey - pt.y);
+        if (!dragged && (distance < delta)) {
             return;
         }
         if (timeoutEvent) {
             clearTimeout(timeoutEvent);
         }
         timeoutEvent = undefined;
-        if (!dragged) {
+        if (!dragged && fcnstart) {
             fcnstart(e);
         }
         dragged = true;
@@ -233,6 +208,7 @@ export default class Events {
         timeoutEvent = undefined;
         Events.clearEvents();
         if (!dragged) {
+            dragged = false;
             Events.itIsAClick(e);
         } else {
             Events.performMouseUpAction(e);
@@ -249,14 +225,14 @@ export default class Events {
     }
 
     static clearEvents () {
-        if (isTablet) {
-            window.removeEventListener('touchmove', Events.touchMove);
-            window.removeEventListener('touchend', Events.touchEnd);
-            window.removeEventListener('touchcancel', Events.touchEnd);
-            window.removeEventListener('touchleave', Events.touchEnd);
+        if (isTablet) { // clearEvents
+            window.ontouchmove = undefined;
+            window.ontouchend = undefined;
         } else {
-            window.removeEventListener('mousemove', Events.mouseMove);
-            window.removeEventListener('mouseup', Events.mouseUp);
+            window.onmousemove = function (e) {
+                e.preventDefault();
+            };
+            window.onmouseup = undefined;
         }
     }
 
@@ -290,31 +266,6 @@ export default class Events {
         el.top = dy + mtx.m42;
         el.left = dx + mtx.m41;
         el.style.webkitTransform = 'translate3d(' + el.left + 'px,' + el.top + 'px, 0)';
-    }
-
-    static isTouchDevice() {
-        return (('ontouchstart' in window) ||
-            (navigator.maxTouchPoints > 0) ||
-            (navigator.msMaxTouchPoints > 0));
-    }
-
-    static getEventCoordinates(e) {
-        if (e.touches && e.touches.length) {
-            return {
-                x: e.touches[0].clientX,
-                y: e.touches[0].clientY
-            };
-        }
-        if (e.changedTouches && e.changedTouches.length) {
-            return {
-                x: e.changedTouches[0].clientX,
-                y: e.changedTouches[0].clientY
-            };
-        }
-        return {
-            x: e.clientX,
-            y: e.clientY
-        };
     }
 
 

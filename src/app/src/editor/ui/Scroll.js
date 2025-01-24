@@ -21,9 +21,25 @@ export default class Scroll {
         this.getContent = cfcn;
         this.getObjects = ofcn;
         div.scroll = this; // for now;
+
+        var me = this;
+        me.aleft.ontouchstart = me.aleft.onmousedown = (e) => { me.scrollright(e); };
+        me.aright.ontouchstart = me.aright.onmousedown = (e) => { me.scrollleft(e); };
+        me.aup.ontouchstart = me.aup.onmousedown = (e) => { me.scrolldown(e); };
+        me.adown.ontouchstart = me.adown.onmousedown = (e) => { me.scrollup(e); };
     }
 
     update () {
+        // Add null checks
+        if (!this.getContent || !this.getObjects) {
+            return;
+        }
+
+        const activeScript = this.getContent();
+        if (!activeScript) {
+            return;
+        }
+
         this.adjustCanvas();
         this.refresh();
         this.bounceBack();
@@ -50,46 +66,16 @@ export default class Scroll {
         newHTML('div', 'halign down', this.adown);
 
         var me = this;
-        if (isTablet) {
-            this.aup.onmousedown = function (e) {
-                me.scrolldown(e);
-            };
-        } else {
-            this.aup.onmousedown = function (e) {
-                me.scrolldown(e);
-            };
-        }
+        me.aleft.ontouchstart = (e) => { me.scrollright(e); };
+        me.aright.ontouchstart = (e) => { me.scrollleft(e); };
+        me.aup.ontouchstart = (e) => { me.scrolldown(e); };
+        me.adown.ontouchstart = (e) => { me.scrollup(e); };
 
-        if (isTablet) {
-            this.adown.onmousedown = function (e) {
-                me.scrollup(e);
-            };
-        } else {
-            this.adown.onmousedown = function (e) {
-                me.scrollup(e);
-            };
-        }
-
-        if (isTablet) {
-            this.aleft.onmousedown = function (e) {
-                me.scrollright(e);
-            };
-        } else {
-            this.aleft.onmousedown = function (e) {
-                me.scrollright(e);
-            };
-        }
-
-        if (isTablet) {
-            this.aright.onmousedown = function (e) {
-                me.scrollleft(e);
-            };
-        } else {
-            this.aright.onmousedown = function (e) {
-                me.scrollleft(e);
-            };
-        }
-
+        // Add mouse event listeners
+        me.aleft.onmousedown = (e) => { me.scrollright(e); };
+        me.aright.onmousedown = (e) => { me.scrollleft(e); };
+        me.aup.onmousedown = (e) => { me.scrolldown(e); };
+        me.adown.onmousedown = (e) => { me.scrollup(e); };
     }
 
     /////////////////////////////////////////////////////////////
@@ -250,6 +236,10 @@ export default class Scroll {
     }
 
     adjustCanvas () {
+        // Add null checks
+        // if (!this.getContent || !this.getObjects) {
+        //     return;
+        // }
         var bc = this.getContent(); // blockcanvas
         var p = this.contents; // scriptscontainer
         var w = p.offsetWidth;

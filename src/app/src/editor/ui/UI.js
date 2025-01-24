@@ -29,10 +29,28 @@ let okclicky = null;
 let infoBoxOpen = false;
 
 export default class UI {
+    static addEventListeners(element, eventName, handler) {
+        if (isTablet) {
+            // Only add needed events based on eventName
+            switch(eventName) {
+                case 'mousedown':
+                    element.addEventListener('touchstart', handler, {passive: false});
+                    break;
+                case 'mouseup':
+                    element.addEventListener('touchend', handler, {passive: false});
+                    break;
+                case 'mousemove':
+                    element.addEventListener('touchmove', handler, {passive: false});
+                    break;
+            }
+        }
+        element.addEventListener(eventName, handler);
+    }
+
     static get infoBoxOpen () {
         return infoBoxOpen;
     }
-    
+
     static layout () {
         UI.topSection();
         UI.middleSection();
@@ -42,25 +60,14 @@ export default class UI {
         ScratchJr.setupKeypad();
         ScratchJr.setupEditableField();
         UI.aspectRatioAdjustment();
-    }
 
-    // Helps debug on Android 4.2 by enabling the user to type in a
-    // JavaScript expression and evaluate the output and render to console.log.
-    /*static addDebugControl () {
-        var div = newHTML('div', 'debug', document.body);
-        setProps(div.style, {
-            position: 'absolute',
-            left: '0px',
-            top: '0px',
-            width: '64px',
-            height: '64px',
-            background: 'red',
-            zIndex: 30000
-        });
-        div.onmousedown = function (e) {
-            console.log(eval(prompt('Enter Debug JavaScript')));
-        };
-    }*/
+        if (isTablet) {
+            UI.nextpage.addEventListener('touchstart', UI.nextPage, {passive: false});
+            UI.prevpage.addEventListener('touchstart', UI.prevPage, {passive: false});
+        }
+        UI.nextpage.addEventListener('mousedown', UI.nextPage);
+        UI.prevpage.addEventListener('mousedown', UI.prevPage);
+    }
 
     /** Tweak some elements depending on aspect ratio */
     static aspectRatioAdjustment () {
@@ -84,13 +91,21 @@ export default class UI {
     }
 
     static leftPanel (div) {
-        // sprite library
         var sl = newHTML('div', 'leftpanel', div);
         var flip = newHTML('div', 'flipme', sl);
         flip.setAttribute('id', 'flip');
-        flip.onmousedown = function (evt) {
+
+        // Add both touch and mouse handlers
+        if (isTablet) {
+            flip.addEventListener('touchstart', function(evt) {
+                evt.preventDefault();
+                ScratchJr.saveAndFlip(evt);
+            }, {passive: false});
+        }
+        flip.addEventListener('mousedown', function(evt) {
             ScratchJr.saveAndFlip(evt);
-        }; // move to project
+        });
+
         UI.layoutLibrary(sl);
     }
 
@@ -450,7 +465,11 @@ export default class UI {
         var p = newHTML('div', 'spritethumbs', sprites);
         var div = newHTML('div', 'spritecc', p);
         div.setAttribute('id', 'spritecc');
-        div.onmousedown = UI.spriteThumbsActions;
+
+        if (isTablet) {
+            div.addEventListener('touchstart', UI.spriteThumbsActions, {passive: false});
+        }
+        div.addEventListener('mousedown', UI.spriteThumbsActions);
 
         // scrollbar
         var sb = newHTML('div', 'scrollbar', sprites);
@@ -461,7 +480,13 @@ export default class UI {
         // new sprite
         if (ScratchJr.isEditable()) {
             var ns = newHTML('div', 'addsprite', sprites);
-            ns.onmousedown = UI.addSprite;
+
+            if (isTablet) {
+                ns.ontouchstart = UI.addSprite;
+            }
+            else{
+                ns.onmousedown = UI.addSprite;
+            }
         }
     }
 
@@ -518,6 +543,7 @@ export default class UI {
         var thumb = gn('sbthumb');
         thumb.style.height = size + 'px';
         thumb.style.top = top + 'px';
+        sc.style.top = '0px';
     }
 
     static scrollContents (dy) {
@@ -569,36 +595,30 @@ export default class UI {
     // Sprite Thumbs Events
     //////////////////////////////////
 
-    static spriteThumbsActions (e) {
+    static spriteThumbsActions(e) {
+        e.preventDefault();
         if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
+            return; // Prevent multi-touch
         }
         if (ScratchJr.onHold) {
             return;
         }
-        var t;
-        var pt = Events.getTargetPoint(e);
-        if (window.event) {
-            t = window.event.srcElement;
-        } else {
-            t = e.target;
-        }
-        //	if ((t.nodeName == "INPUT") || (t.nodeName == "FORM")) return;
-        e.preventDefault();
-        e.stopPropagation();
-        ScratchJr.blur();
-        t.focus();
-        if (t.className == 'brush') {
-            UI.putInPaintEditor(e); return;
-        }
-        var tb = Thumbs.getType(t, 'spritethumb');
+
+        let target = e.target || window.event.srcElement;
+        let tb = Thumbs.getType(target, 'spritethumb');
+
         if (!tb) {
             if (ScratchJr.shaking) {
                 ScratchJr.clearSelection();
             }
             return;
         }
-        var x = localx(t, pt.x);
+
+        // Normalize touch/mouse coordinates
+        let pt = Events.getTargetPoint(e);
+        let x = localx(target, pt.x);
+
+        // Handle sprite thumbnail click
         if (tb && (x < (70 * scaleMultiplier)) && ScratchJr.isEditable()) {
             Thumbs.startDragThumb(e, tb);
         } else {
@@ -606,19 +626,23 @@ export default class UI {
         }
     }
 
-    static startSpriteScroll (e, tb) {
+    static startSpriteScroll(e, tb) {
         if (ScratchJr.shaking) {
             ScratchJr.clearSelection();
         }
         if (!tb) {
             return;
         }
+
+        // Use same scroll handler for both touch/mouse
         if (gn('scrollbar').className == 'scrollbar off') {
-            Events.startDrag(e, tb, UI.ignoreEvent, UI.ignoreEvent, UI.ignoreEvent, UI.spriteClicked,
-                ScratchJr.isEditable() ? Thumbs.startCharShaking : undefined);
+            // Click handling only - no scroll
+            Events.startDrag(e, tb, UI.ignoreEvent, UI.ignoreEvent, UI.ignoreEvent,
+                UI.spriteClicked, ScratchJr.isEditable() ? Thumbs.startCharShaking : undefined);
         } else {
-            Events.startDrag(e, tb, UI.prepareToScroll, UI.stopScroll, UI.spriteScolling, UI.spriteClicked,
-                ScratchJr.isEditable() ? Thumbs.startCharShaking : undefined);
+            // Scroll handling
+            Events.startDrag(e, tb, UI.prepareToScroll, UI.stopScroll, UI.spriteScolling,
+                UI.spriteClicked, ScratchJr.isEditable() ? Thumbs.startCharShaking : undefined);
         }
     }
 
@@ -629,7 +653,7 @@ export default class UI {
 
     static prepareToScroll (e) {
         e.preventDefault();
-        e.stopPropagation();    
+        e.stopPropagation();
         UI.spriteScolling(e);
     }
 
@@ -657,24 +681,59 @@ export default class UI {
         UI.updateSpriteScroll();
     }
 
-    static spriteClicked (e, el) {
+    static spriteClicked(e, el) {
         e.preventDefault();
         e.stopPropagation();
-        var t;
-        if (window.event) {
-            t = window.event.srcElement;
-        } else {
-            t = e.target;
-        }
+
+        let target = e.target || window.event.srcElement;
+
         if (ScratchJr.isEditable() && ScratchJr.getSprite() &&
-            (((t.className == 'sname') && (el.owner == ScratchJr.getSprite().id))
-            || (t.className == 'brush'))) {
+            (((target.className == 'sname') && (el.owner == ScratchJr.getSprite().id))
+                || (target.className == 'brush'))) {
             UI.putInPaintEditor(e);
             return;
         }
+
         if (el.className.indexOf('shakeme') < 0) {
             el.setAttribute('class', 'spritethumb on');
         }
+
+        // Restore stage control event handlers
+        if (gn('go')) {
+            if (isTablet) {
+                gn('go').addEventListener('touchstart', UI.toggleRun, {passive: false});
+            }
+            gn('go').onmousedown = UI.toggleRun;
+        }
+
+        if (gn('resetall')) {
+            if (isTablet) {
+                gn('resetall').addEventListener('touchstart', UI.resetAllSprites, {passive: false});
+            }
+            gn('resetall').onmousedown = UI.resetAllSprites;
+        }
+
+        if (gn('grid')) {
+            if (isTablet) {
+                gn('grid').addEventListener('touchstart', UI.switchGrid, {passive: false});
+            }
+            gn('grid').onmousedown = UI.switchGrid;
+        }
+
+        if (gn('grid')) {
+            if (isTablet) {
+                gn('grid').addEventListener('touchstart', UI.switchGrid, {passive: false});
+            }
+            gn('grid').onmousedown = UI.switchGrid;
+        }
+
+        if (gn('full')) {
+            if (isTablet) {
+                gn('full').addEventListener('touchstart', ScratchJr.fullScreen, {passive: false});
+            }
+            gn('full').onmousedown = ScratchJr.fullScreen;
+        }
+
         Thumbs.clickOnSprite(e, el);
     }
 
@@ -743,23 +802,28 @@ export default class UI {
 
     static creatTopBarClicky (p, str, mstyle, fcn) {
         var toggle = newHTML('div', mstyle, p);
-        toggle.onmousedown = fcn;
         toggle.setAttribute('id', str);
+
+        // Add both touch and mouse handlers
+        if (isTablet) {
+            toggle.addEventListener('touchstart', fcn, {passive: false});
+        }
+        toggle.onmousedown = fcn;
     }
 
     static fullscreenControls () {
         UI.nextpage = newHTML('div', 'nextpage off', frame);
         UI.prevpage = newHTML('div', 'nextpage off', frame);
+
+        // Add touch handlers
         if (isTablet) {
-            UI.nextpage.onmousedown = UI.nextPage;
-        } else {
-            UI.nextpage.onmousedown = UI.nextPage;
+            UI.nextpage.addEventListener('touchstart', UI.nextPage, {passive: false});
+            UI.prevpage.addEventListener('touchstart', UI.prevPage, {passive: false});
         }
-        if (isTablet) {
-            UI.prevpage.onmousedown = UI.prevPage;
-        } else {
-            UI.prevpage.onmousedown = UI.prevPage;
-        }
+
+        // Add mouse handlers
+        UI.nextpage.addEventListener('mousedown', UI.nextPage);
+        UI.prevpage.addEventListener('mousedown', UI.prevPage);
     }
 
     static updatePageControls () {
@@ -842,12 +906,18 @@ export default class UI {
     //   Right panel
     /////////////////////////////////////
 
-    static rightPanel (div) {
+    static rightPanel(div) {
         var rp = newHTML('div', 'rightpanel', div);
         var tb = newHTML('div', 'pages', rp);
         tb.setAttribute('id', 'pages');
         var ndiv = newHTML('div', 'pagescc', tb);
         ndiv.setAttribute('id', 'pagecc');
+
+        // Add event listeners for page selection
+        if (isTablet) {
+            ndiv.addEventListener('touchstart', Thumbs.pageMouseDown, {passive: false});
+        }
+        ndiv.addEventListener('mousedown', Thumbs.pageMouseDown);
     }
 
     //////////////////////////////////////
@@ -906,11 +976,11 @@ export default class UI {
         }
         e.preventDefault();
         e.stopPropagation();
-        if (isAndroid) {
-            if (gn('textbox').style.visibility === 'visible') {
-                return;
-            }
+
+        if (isAndroid && gn('textbox').style.visibility === 'visible') {
+            return;
         }
+
         ScratchJr.unfocus(e);
         ScratchJr.stage.currentPage.createText();
     }
@@ -922,11 +992,13 @@ export default class UI {
     static createFormForText (p) {
         var tf = newHTML('div', 'pagetext off', p);
         tf.setAttribute('id', 'textbox');
+
         if (isAndroid) {
-            tf.onmousedown = function (e) {
+            tf.addEventListener('touchstart', function(e) {
                 e.preventDefault();
-            };
+            }, {passive: false});
         }
+
         var activetb = newHTML('form', 'pageform', tf);
         activetb.name = 'activetextbox';
         activetb.id = 'myform';
@@ -969,6 +1041,11 @@ export default class UI {
             colour.onmousedown = UI.setTextColor;
         }
         UI.setMenuTextColor(gn('textcolormenu').childNodes[9]);
+
+        if (isTablet) {
+            colour.addEventListener('touchstart', UI.setTextColor, {passive: false});
+        }
+        colour.addEventListener('mousedown', UI.setTextColor);
     }
 
     static createTextSizeMenu (div) {
@@ -980,7 +1057,12 @@ export default class UI {
             textuisize.fs = sizes[i];
             var sf = newHTML('span', undefined, textuisize);
             sf.textContent = 'A';
-            textuisize.onmousedown = UI.setTextSize;
+
+            if (isTablet) {
+                textuisize.addEventListener('touchstart', UI.setTextSize, {passive: false});
+            }
+            textuisize.addEventListener('mousedown', UI.setTextSize);
+
         }
         UI.setMenuTextSize(gn('textfontsizes').childNodes[5]);
     }
@@ -1018,6 +1100,11 @@ export default class UI {
     static topLevelColor (e) {
         e.preventDefault();
         e.stopPropagation();
+
+        if (isTablet && e.touches && (e.touches.length > 1)) {
+            return;
+        }
+
         if (gn('fontcolorbutton').className == 'changecolorText on') {
             gn('fontcolorbutton').className = 'changecolorText off';
             gn('textcolormenu').className = 'textuicolormenu off';

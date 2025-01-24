@@ -50,21 +50,21 @@ function indexFirstTime () {
         gn('redguy').className = 'red show';
     }
     iOS.askpermission(); // ask for sound recording
-    
-   
+
+
     setTimeout(function () {
         indexLoadOptions();
     }, /*SPLASH SCREEN LOAD DELAY*/3000);
-    
+
 }
 
 function indexLoadOptions () {
-    if (window.Settings.edition != 'PBS' && AppUsage.askForUsage()) {
-        indexLoadUsage();
-    } else {
-        indexLoadStart();
-    }
-    
+    // if (window.Settings.edition != 'PBS' && AppUsage.askForUsage()) {
+    //     indexLoadUsage();
+    // } else {
+    //     indexLoadStart();
+    // }
+    indexLoadStart();
 }
 
 function indexLoadStart (afterUsage) {
@@ -80,7 +80,7 @@ function indexLoadStart (afterUsage) {
         gn('blueguy').className = 'blue hide';
         gn('redguy').className = 'red hide';
         gn('gear').className = 'gear show';
-        
+
         if (afterUsage) {
             gn('catface').className = 'catface show';
             gn('jrlogo').className = 'jrlogo show';
@@ -108,16 +108,16 @@ function indexLoadUsage() {
     gn('blueguy').className = 'blue hide';
     gn('redguy').className = 'red hide';
     gn('catface').className = 'catface hide';
-    
+
     gn('jrlogo').className = 'jrlogo hide';
-    
-    
+
+
     gn('usageQuestion').textContent = Localization.localize('USAGE_QUESTION');
     gn('useSchoolText').textContent = Localization.localize('USAGE_SCHOOL');
     gn('useHomeText').textContent = Localization.localize('USAGE_HOME');
     gn('useOtherText').textContent = Localization.localize('USAGE_OTHER');
     gn('usageNoanswerText').textContent = Localization.localize('USAGE_NONE');
-    
+
     gn('usageQuestion').className = 'usageQuestion show';
     gn('usageSchool').className = 'usageSchool show';
     gn('usageHome').className = 'usageHome show';
@@ -132,13 +132,13 @@ function indexLoadUsage() {
 
 function setClassOfElementById(id, className) { // eslint-disable-line no-unused-vars
 	let element = gn(id);
-		
+
 	if (!element) {
 		return;
 	}
-	
+
 	element.className = className;
-	
+
 }
 
 function indexGohome () {

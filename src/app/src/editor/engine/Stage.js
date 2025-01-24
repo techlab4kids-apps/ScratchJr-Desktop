@@ -9,10 +9,30 @@ import Events from '../../utils/Events';
 import ScratchAudio from '../../utils/ScratchAudio';
 import Vector from '../../geom/Vector';
 import Page from './Page';
-import {newHTML, newDiv, gn,
+import {
+    newHTML, newDiv, gn,
     getIdFor, setProps,
     scaleMultiplier, setCanvasSize,
-    globaly, globalx} from '../../utils/lib';
+    globaly, globalx, isTablet
+} from '../../utils/lib';
+
+function addEventListeners(element, eventName, handler) {
+    if (isTablet) {
+        // Only add needed events based on eventName
+        switch(eventName) {
+            case 'mousedown':
+                element.addEventListener('touchstart', handler, {passive: false});
+                break;
+            case 'mouseup':
+                element.addEventListener('touchend', handler, {passive: false});
+                break;
+            case 'mousemove':
+                element.addEventListener('touchmove', handler, {passive: false});
+                break;
+        }
+    }
+    element.addEventListener(eventName, handler);
+}
 
 export default class Stage {
     constructor (div) {
@@ -28,11 +48,14 @@ export default class Stage {
             position: 'absolute'
         });
         var me = this;
-        this.div.onmousedown = function (evt) {
+
+        // this.div.ontouchstart = (evt) => { me.mouseDown(evt); };
+        // this.div.onmousedown = (evt) => { me.mouseDown(evt); };
+
+        addEventListeners(this.div, 'mousedown', (evt) => {
             me.mouseDown(evt);
-        };
-        
-        
+        });
+
         this.div.owner = this;
         this.currentZoom = 1;
         this.initialPoint = {
@@ -300,42 +323,47 @@ export default class Stage {
 
 
     mouseDown (e) {
-       /* if (e.touches && (e.touches.length > 1)) {
-            return;
-        }*/
-        
         if (ScratchJr.onHold) {
             return;
         }
         e.preventDefault();
         ScratchJr.blur();
+
         if (!this.currentPage) {
             return;
         }
         if (document.forms.activetextbox.textsprite) {
             return;
         }
-        var pt = this.getStagePt(e);
+
+        const  pt = this.getStagePt(e);
+
         setCanvasSize(ScratchJr.workingCanvas, 480, 360);
         var ctx = ScratchJr.workingCanvas.getContext('2d');
         var target = (e.target.nodeName == 'CANVAS') ? this.checkShaking(pt, e.target) : e.target;
+
         if (ScratchJr.shaking && (target.id == 'deletesprite')) {
             this.removeSprite(ScratchJr.shaking.owner);
             return;
         }
+
         ctx.clearRect(0, 0, 480, 360);
         var hitobj = this.whoIsIt(ctx, pt);
-        if (ScratchJr.shaking && hitobj && (hitobj.id == ScratchJr.shaking.id)) { // check grid case
+
+        if (ScratchJr.shaking && hitobj && (hitobj.id == ScratchJr.shaking.id)) {
             var sprname = ScratchJr.shaking.id;
-            if (((pt.x - gn(sprname).owner.screenLeft()) < 45) && ((pt.y - gn(sprname).owner.screenTop()) < 45)) {
+            if (((pt.x - gn(sprname).owner.screenLeft()) < 45) &&
+                ((pt.y - gn(sprname).owner.screenTop()) < 45)) {
                 this.removeSprite(ScratchJr.shaking.owner);
                 return;
             }
         }
+
         if (!hitobj) {
             ScratchJr.clearSelection();
             return;
         }
+
         if (ScratchJr.shaking) {
             ScratchJr.clearSelection();
         } else {
@@ -356,16 +384,24 @@ export default class Stage {
     }
 
     mouseDownOnSprite (spr, pt) {
-        this.initialPoint = {
-            x: pt.x,
-            y: pt.y
-        };
+        this.initialPoint = {x: pt.x, y: pt.y};
         Events.dragthumbnail = spr.div;
         Events.clearEvents();
+
         if (!ScratchJr.inFullscreen && ScratchJr.isEditable()) {
             Events.holdit(spr.div, this.startShaking);
         }
-        this.setEvents();
+
+        // Start drag operation
+        Events.startDrag(
+            {x: pt.x, y: pt.y},
+            spr.div,
+            () => this.startSpriteDrag(),
+            (e) => this.mouseUp(e),
+            (e) => this.mouseMove(e),
+            (e) => this.clickOnSprite(e, spr),
+            this.startShaking
+        );
     }
 
     whoIsIt (ctx, pt) {
@@ -431,7 +467,7 @@ export default class Stage {
     }
 
     startShaking (b) {
-        if (!b.owner) {
+        if (!b || !b.owner) {
             return;
         }
         Events.clearEvents();
@@ -441,7 +477,7 @@ export default class Stage {
     }
 
     stopShaking (b) {
-        if (!b.owner) {
+        if (!b || !b.owner) {
             return;
         }
         b.owner.stopShaking();

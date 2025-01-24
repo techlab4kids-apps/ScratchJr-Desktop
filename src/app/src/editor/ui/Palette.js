@@ -49,9 +49,32 @@ export default class Palette {
         Palette.createCategorySelectors(parent);
         var div = newHTML('div', 'palette', parent);
         div.setAttribute('id', 'palette');
-        div[isTablet ? 'ontouchstart' : 'onmousedown'] = Palette.paletteMouseDown;
+        // div[isTablet ? 'ontouchstart' : 'onmousedown'] = Palette.paletteMouseDown;
         var pc = newHTML('div', 'papercut', parent);
         newHTML('div', 'withstyle', pc);
+
+        var paletteElement = gn('palette');
+        Palette.addEventListeners(paletteElement, 'mousedown', (e) => {
+            Palette.paletteMouseDown(e);
+        });
+    }
+
+    static  addEventListeners(element, eventName, handler) {
+        if (isTablet) {
+            // Only add needed events based on eventName
+            switch(eventName) {
+                case 'mousedown':
+                    element.addEventListener('touchstart', handler, {passive: false});
+                    break;
+                case 'mouseup':
+                    element.addEventListener('touchend', handler, {passive: false});
+                    break;
+                case 'mousemove':
+                    element.addEventListener('touchmove', handler, {passive: false});
+                    break;
+            }
+        }
+        element.addEventListener(eventName, handler);
     }
 
     static createCategorySelectors (parent) {
@@ -67,6 +90,7 @@ export default class Palette {
     }
 
     static paletteMouseDown (e) {
+        e.preventDefault();
         if (isTablet && e.touches && (e.touches.length > 1)) {
             return;
         }
@@ -150,7 +174,8 @@ export default class Palette {
     }
 
     static startShaking (b) {
-        if (!b.owner) {
+        if (!b || !b.owner) {
+            console.log ("stop shacking action could not be handled")
             return;
         }
         if (b.owner.blocktype != 'playusersnd') {
@@ -172,7 +197,8 @@ export default class Palette {
     }
 
     static stopShaking (b) {
-        if (!b.owner) {
+        if (!b || !b.owner) {
+            console.log ("stop shacking action could not be handled")
             return;
         }
         ScratchJr.shaking = undefined;
@@ -419,7 +445,7 @@ export default class Palette {
         var spr = ScratchJr.getSprite();
         var list = spr ? spr.sounds : [];
         var newb;
-        
+
         for (var i = 0; i < list.length; i++) {
             var op = (MediaLib.sounds.indexOf(list[i]) < 0) ? 'playusersnd' : 'playsnd';
             var val = (MediaLib.sounds.indexOf(list[i]) < 0) ? i : list[i];
